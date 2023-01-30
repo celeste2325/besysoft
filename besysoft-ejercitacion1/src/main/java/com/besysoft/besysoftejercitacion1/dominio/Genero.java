@@ -1,5 +1,6 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 public class Genero {
 
+    @JsonIgnore
     private Long id;
     private String nombre;
     private List<Pelicula_Serie> peliculas_seriesAsociadas;

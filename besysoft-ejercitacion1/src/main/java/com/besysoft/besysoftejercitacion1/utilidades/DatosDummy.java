@@ -34,7 +34,7 @@ public class DatosDummy {
         //creacion de personajes
         Personaje keanuReeves = new Personaje(1L,"Keanu Charles Reeves",58,58.0,"mejor conocido como Keanu Reeves es un actor y músico canadiense.Es conocido por Interpretar a Neo en Matrix y a John Wick En la trilogía John Wick.");
         Personaje jasonMomoa = new Personaje(2L,"Jason Momoa",43,80.0," es un actor, actor de voz, escritor, productor y director estadounidense. ");
-
+        Personaje LaurenceFishburne = new Personaje(3L, "Laurence Fishburne",61, 87, "Fishburne nació en Augusta, Georgia");
         //creacion de peliculas-series
         Pelicula_Serie matrix = new Pelicula_Serie(1L,"Matrix",LocalDate.of(1999,01,01),5.0);
         Pelicula_Serie johnWick = new Pelicula_Serie(2L,"John Wick",LocalDate.of(2014,01,01),4.7);
@@ -43,6 +43,7 @@ public class DatosDummy {
 
        //agrega peliculas a los personajes
         keanuReeves.addPelicula_serie(matrix,johnWick);
+        LaurenceFishburne.addPelicula_serie(matrix);
         jasonMomoa.addPelicula_serie(aquaman,gameofThrones);
 
         //creacion generos
@@ -57,7 +58,7 @@ public class DatosDummy {
 
         Collections.addAll(this.generos, aventura,accion);
         Collections.addAll(this.peliculas_series, matrix,johnWick,aquaman,gameofThrones);
-        Collections.addAll(this.personajes, keanuReeves, jasonMomoa);
+        Collections.addAll(this.personajes, keanuReeves, jasonMomoa, LaurenceFishburne);
     }
     //devuelve Object porq en un caso retorna distintos tipos de datos, de acuerdo al if
     public Object getPersonajesPorNombreOrEdad(String nombre, int edad) {
@@ -81,16 +82,47 @@ public class DatosDummy {
         }
     }
 
-    public Object getPeliculasByFecha(LocalDate desde, LocalDate hasta) {
+    public List<Pelicula_Serie> getPeliculasByFecha(LocalDate desde, LocalDate hasta) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getFechaCreacion().isAfter(desde) &&
-                pelicula_serie.getFechaCreacion().isBefore(hasta));
+                pelicula_serie.getFechaCreacion().isBefore(hasta)).collect(Collectors.toList());
     }
 
     public Object getPersonajesPorRangoDeEdad(int desde, int hasta) {
         return this.personajes.stream().filter(personaje -> personaje.getEdad() >= desde && personaje.getEdad() <= hasta);
     }
 
-    public Object getPeliculasByRangoDeCalificacion(double desde, double hasta) {
-        return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getCalificacion() >= desde && pelicula_serie.getCalificacion() <= hasta);
+    public List<Pelicula_Serie> getPeliculasByRangoDeCalificacion(double desde, double hasta) {
+        return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getCalificacion() >= desde && pelicula_serie.getCalificacion() <= hasta).collect(Collectors.toList());
     }
+
+    //se valida que no exista pelicula con mismo titulo
+    public Pelicula_Serie existePeliculaConMismoTitulo(Pelicula_Serie pelicula_serie) {
+      return  this.getPeliculas_series().stream().filter(pelicula ->
+                pelicula.getTitulo().
+                        equalsIgnoreCase(pelicula_serie.getTitulo())).findAny().orElse(null);
+    }
+
+    //se asume que no debe existir 2 peresonajes con mismo nombre y misma edad
+    public Personaje elPersonajeExiste(Personaje personaje) {
+        return this.getPersonajes().stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())
+        && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
+    }
+
+    public Pelicula_Serie buscarPeliculaById(Long id) {
+        return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getId() == id).findAny().orElse(null);
+    }
+
+    public Personaje buscarPersonajeById(Long id) {
+        return this.personajes.stream().filter(personaje -> personaje.getId() == id).findAny().orElse(null);
+    }
+
+    public Genero buscarGeneroById(Long id) {
+        return this.getGeneros().stream().filter(genero -> genero.getId() == id).findAny().orElse(null);
+    }
+
+    public Genero elGeneroExiste(Genero genero) {
+        //se asume que no debe existir 2 generos con mismo nombre
+        return this.getGeneros().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero.getNombre())).findAny().orElse(null);
+    }
+
 }

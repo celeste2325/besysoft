@@ -1,6 +1,7 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,11 +12,13 @@ import java.util.List;
 @Setter
 @Getter
 public class Pelicula_Serie {
-    @Getter(AccessLevel.NONE)
+
+    @JsonIgnore
     private Long id;
     private String titulo;
     private LocalDate fechaCreacion;
     private double calificacion;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Personaje> personajesAsociados;
 
     public Pelicula_Serie(Long id, String titulo,LocalDate fechaCreacion, double calificacion) {
