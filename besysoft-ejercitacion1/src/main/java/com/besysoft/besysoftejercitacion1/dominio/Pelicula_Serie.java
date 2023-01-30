@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -21,7 +22,7 @@ public class Pelicula_Serie {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Personaje> personajesAsociados;
 
-    public Pelicula_Serie(Long id, String titulo,LocalDate fechaCreacion, double calificacion) {
+    public Pelicula_Serie(Long id, String titulo, LocalDate fechaCreacion, double calificacion) {
         this.id = id;
         this.titulo = titulo;
         this.fechaCreacion = fechaCreacion;
@@ -37,5 +38,13 @@ public class Pelicula_Serie {
                 ", calificacion=" + calificacion +
                 ", personajesAsociados=" + personajesAsociados +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pelicula_Serie that = (Pelicula_Serie) o;
+        return Objects.equals(titulo, that.titulo);
     }
 }

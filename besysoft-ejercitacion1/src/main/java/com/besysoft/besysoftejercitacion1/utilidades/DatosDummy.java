@@ -32,34 +32,35 @@ public class DatosDummy {
 
     public void llenarArreglos() {
         //creacion de personajes
-        Personaje keanuReeves = new Personaje(1L,"Keanu Charles Reeves",58,58.0,"mejor conocido como Keanu Reeves es un actor y músico canadiense.Es conocido por Interpretar a Neo en Matrix y a John Wick En la trilogía John Wick.");
-        Personaje jasonMomoa = new Personaje(2L,"Jason Momoa",43,80.0," es un actor, actor de voz, escritor, productor y director estadounidense. ");
-        Personaje LaurenceFishburne = new Personaje(3L, "Laurence Fishburne",61, 87, "Fishburne nació en Augusta, Georgia");
+        Personaje keanuReeves = new Personaje(1L, "Keanu Charles Reeves", 58, 58.0, "mejor conocido como Keanu Reeves es un actor y músico canadiense.Es conocido por Interpretar a Neo en Matrix y a John Wick En la trilogía John Wick.");
+        Personaje jasonMomoa = new Personaje(2L, "Jason Momoa", 43, 80.0, " es un actor, actor de voz, escritor, productor y director estadounidense. ");
+        Personaje LaurenceFishburne = new Personaje(3L, "Laurence Fishburne", 61, 87, "Fishburne nació en Augusta, Georgia");
         //creacion de peliculas-series
-        Pelicula_Serie matrix = new Pelicula_Serie(1L,"Matrix",LocalDate.of(1999,01,01),5.0);
-        Pelicula_Serie johnWick = new Pelicula_Serie(2L,"John Wick",LocalDate.of(2014,01,01),4.7);
-        Pelicula_Serie gameofThrones = new Pelicula_Serie(3L,"Game of Thrones",LocalDate.of(2011,04,17),5.0);
-        Pelicula_Serie aquaman  = new Pelicula_Serie(4L,"Aquaman",LocalDate.of(2018,12,21),3);
+        Pelicula_Serie matrix = new Pelicula_Serie(1L, "Matrix", LocalDate.of(1999, 01, 01), 5.0);
+        Pelicula_Serie johnWick = new Pelicula_Serie(2L, "John Wick", LocalDate.of(2014, 01, 01), 4.7);
+        Pelicula_Serie gameofThrones = new Pelicula_Serie(3L, "Game of Thrones", LocalDate.of(2011, 04, 17), 5.0);
+        Pelicula_Serie aquaman = new Pelicula_Serie(4L, "Aquaman", LocalDate.of(2018, 12, 21), 3);
 
-       //agrega peliculas a los personajes
-        keanuReeves.addPelicula_serie(matrix,johnWick);
+        //agrega peliculas a los personajes
+        keanuReeves.addPelicula_serie(matrix, johnWick);
         LaurenceFishburne.addPelicula_serie(matrix);
-        jasonMomoa.addPelicula_serie(aquaman,gameofThrones);
+        jasonMomoa.addPelicula_serie(aquaman, gameofThrones);
 
         //creacion generos
-        Genero accion = new Genero(1L,"accion");
-        Genero aventura = new Genero(2L,"aventura");
+        Genero accion = new Genero(1L, "accion");
+        Genero aventura = new Genero(2L, "aventura");
 
         //agrega peliculas-series a los generos
-        accion.addPelicula_serie(aquaman,matrix,johnWick);
-        aventura.addPelicula_serie(aquaman,gameofThrones);
+        accion.addPelicula_serie(aquaman, matrix, johnWick);
+        aventura.addPelicula_serie(aquaman, gameofThrones);
 
         //llenado de arreglos generos, peliculas_series, personajes.
 
-        Collections.addAll(this.generos, aventura,accion);
-        Collections.addAll(this.peliculas_series, matrix,johnWick,aquaman,gameofThrones);
+        Collections.addAll(this.generos, aventura, accion);
+        Collections.addAll(this.peliculas_series, matrix, johnWick, aquaman, gameofThrones);
         Collections.addAll(this.personajes, keanuReeves, jasonMomoa, LaurenceFishburne);
     }
+
     //devuelve Object porq en un caso retorna distintos tipos de datos, de acuerdo al if
     public Object getPersonajesPorNombreOrEdad(String nombre, int edad) {
         if (!nombre.equalsIgnoreCase("") && edad != 0) {
@@ -73,11 +74,9 @@ public class DatosDummy {
     public Object getPeliculasByTituloOrGenero(String titulo, String genero) {
         if (!titulo.equalsIgnoreCase("") && !genero.equalsIgnoreCase("")) {
             return "buscar por genero o por titulo";
-        }
-        else if (!titulo.equalsIgnoreCase("") && genero.equalsIgnoreCase("")) {
+        } else if (!titulo.equalsIgnoreCase("") && genero.equalsIgnoreCase("")) {
             return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getTitulo().equalsIgnoreCase(titulo)).distinct().findFirst().get();
-        }
-        else {
+        } else {
             return this.generos.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
         }
     }
@@ -96,16 +95,16 @@ public class DatosDummy {
     }
 
     //se valida que no exista pelicula con mismo titulo
-    public Pelicula_Serie existePeliculaConMismoTitulo(Pelicula_Serie pelicula_serie) {
-      return  this.getPeliculas_series().stream().filter(pelicula ->
+    public Pelicula_Serie buscarPeliculaConMismoTitulo(Pelicula_Serie pelicula_serie) {
+        return this.getPeliculas_series().stream().filter(pelicula ->
                 pelicula.getTitulo().
                         equalsIgnoreCase(pelicula_serie.getTitulo())).findAny().orElse(null);
     }
 
     //se asume que no debe existir 2 peresonajes con mismo nombre y misma edad
-    public Personaje elPersonajeExiste(Personaje personaje) {
+    public Personaje buscarPersonajeConMismoNombreYedad(Personaje personaje) {
         return this.getPersonajes().stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())
-        && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
+                && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
     }
 
     public Pelicula_Serie buscarPeliculaById(Long id) {
@@ -120,7 +119,7 @@ public class DatosDummy {
         return this.getGeneros().stream().filter(genero -> genero.getId() == id).findAny().orElse(null);
     }
 
-    public Genero elGeneroExiste(Genero genero) {
+    public Genero buscarGeneroConMismoNombre(Genero genero) {
         //se asume que no debe existir 2 generos con mismo nombre
         return this.getGeneros().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero.getNombre())).findAny().orElse(null);
     }

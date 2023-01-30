@@ -19,11 +19,9 @@ import static java.lang.String.format;
 @RequestMapping("/peliculas")
 public class PeliculaController {
     private final DatosDummy datos;
-
     public PeliculaController(DatosDummy datos) {
         this.datos = datos;
     }
-
     @GetMapping()
     public ResponseEntity<List<Pelicula_Serie>> getPeliculas() {
         return new ResponseEntity<>(datos.getPeliculas_series(), HttpStatus.OK);
@@ -35,8 +33,7 @@ public class PeliculaController {
     }
 
     @GetMapping("/fechas")
-    public ResponseEntity<List<Pelicula_Serie>> buscarPeliculasPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde,
-                                                                               @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
+    public ResponseEntity<List<Pelicula_Serie>> buscarPeliculasPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
         return new ResponseEntity<>(this.datos.getPeliculasByFecha(desde, hasta), HttpStatus.OK);
     }
 
@@ -53,7 +50,7 @@ public class PeliculaController {
         //se asumen obligatorios los campos titulo y fecha de creacion.
         if (pelicula_serie.getTitulo() != null && pelicula_serie.getFechaCreacion() != null) {
             //la pelicula existe
-            if (datos.existePeliculaConMismoTitulo(pelicula_serie) != null) {
+            if (datos.buscarPeliculaConMismoTitulo(pelicula_serie) != null) {
                 return ResponseEntity.badRequest().body("Ya existe una pelicula con mismo titulo");
             } else {
                 pelicula_serie.setId((long) (this.datos.getPeliculas_series().size() + 1));
@@ -68,7 +65,7 @@ public class PeliculaController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePelicula(@RequestBody Pelicula_Serie pelicula_serie, @PathVariable Long id) {
         Pelicula_Serie peliculaEncontradaPorId = this.datos.buscarPeliculaById(id);
-        Pelicula_Serie peliculaEncontradaPorTitulo = datos.existePeliculaConMismoTitulo(pelicula_serie);
+        Pelicula_Serie peliculaEncontradaPorTitulo = datos.buscarPeliculaConMismoTitulo(pelicula_serie);
 
         //existe para ser modificada
         if (peliculaEncontradaPorId != null) {
@@ -91,19 +88,21 @@ public class PeliculaController {
             //editar lista de pesonajes asociados a la pelicula
             pelicula_serie.getPersonajesAsociados().forEach(personaje ->
                     {
-                        //encuentra aquellos personajes q no estan cargados y los agrega
+                        //encuentra aquellos personajes q no estan cargados a la pelicula
                         if (!peliculaEncontradaPorId.getPersonajesAsociados().contains(personaje)) {
                             //busca el personaje con ese nombre y edad (asumiendo q son sus datos unicos) esto para no tener que pasar el obj completo por el body
-                            Personaje personajeEncontrado = datos.getPersonajes().stream().
-                                    filter(p -> p.getNombre()
-                                            .equalsIgnoreCase(personaje.getNombre()) && p.getEdad() == personaje.getEdad()).findAny().
-                                    orElse(null);
-                            //si no esta cargado el personaje a la pelicula lo agrega
-                            peliculaEncontradaPorId.getPersonajesAsociados().add(personajeEncontrado);
+                            Personaje personajeEncontrado = this.datos.buscarPersonajeConMismoNombreYedad(personaje);
 
-                            //actualiza tambien la lista de peliculas asociadas al personaje, siempre que ya no exista la pelicula en la lista. Para mantener consistencia
-                            if (!personajeEncontrado.getPeliculas_series().contains(peliculaEncontradaPorId)) {
-                                personajeEncontrado.addPelicula_serie(peliculaEncontradaPorId);
+                            //para mantener consistencia si el personaje que se intenta agregar no existe lo crea
+                            if (personajeEncontrado == null) {
+                                //agregar metodo dar alta cuando lo saque del controller y pase al service
+                            }else {
+                                //si no esta cargado el personaje a la pelicula lo agrega
+                                peliculaEncontradaPorId.getPersonajesAsociados().add(personajeEncontrado);
+                                //actualiza tambien la lista de peliculas que tiene ese personaje, siempre que ya no exista la pelicula en la lista.
+                                if (!personajeEncontrado.getPeliculas_series().contains(peliculaEncontradaPorId)) {
+                                    personajeEncontrado.addPelicula_serie(peliculaEncontradaPorId);
+                                }
                             }
                         }
                     }

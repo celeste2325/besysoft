@@ -29,7 +29,7 @@ public class Personaje {
         this.peliculas_series = new ArrayList<>();
     }
 
-    public void addPelicula_serie(Pelicula_Serie...pelicula_serie) {
+    public void addPelicula_serie(Pelicula_Serie... pelicula_serie) {
         Collections.addAll(this.peliculas_series, pelicula_serie);
     }
 
@@ -52,4 +52,5 @@ public class Personaje {
         Personaje personaje = (Personaje) o;
         return edad == personaje.edad && Objects.equals(nombre, personaje.nombre);
     }
+
 }

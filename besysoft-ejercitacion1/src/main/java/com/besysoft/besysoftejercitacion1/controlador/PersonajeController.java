@@ -1,5 +1,6 @@
 package com.besysoft.besysoftejercitacion1.controlador;
 
+import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.dominio.Personaje;
 import com.besysoft.besysoftejercitacion1.utilidades.DatosDummy;
 import org.springframework.http.HttpHeaders;
@@ -8,24 +9,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/personajes")
 public class PersonajeController {
     private final DatosDummy datos;
-
     public PersonajeController(DatosDummy datos) {
         this.datos = datos;
     }
 
     @GetMapping()
-    public List<Personaje> devolverTodosLosPersonajes() {
-        return this.datos.getPersonajes();
+    public ResponseEntity<List<Personaje>> devolverTodosLosPersonajes() {
+        return new ResponseEntity<>(this.datos.getPersonajes(), HttpStatus.OK);
     }
 
     @GetMapping("/request-param")
-    public Object buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) {
-        return this.datos.getPersonajesPorNombreOrEdad(nombre, edad);
+    public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) {
+        return new ResponseEntity<>(this.datos.getPersonajesPorNombreOrEdad(nombre, edad), HttpStatus.OK);
     }
 
     @GetMapping("/edad")
@@ -39,59 +40,68 @@ public class PersonajeController {
         headers.set("app-info", "celeste@bootcamp.com");
 
         //se asume campos nombre y edad son obligatorios
-        if (!personaje.getNombre().isEmpty() && personaje.getEdad() != 0) {
-            Personaje personajeEncontrado = datos.elPersonajeExiste(personaje);
-
-            if (personajeEncontrado == null) {
-                personaje.setId((long) (this.datos.getPersonajes().size() + 1));
-                this.datos.getPersonajes().add(personaje);
-                return new ResponseEntity<>(personaje, headers, HttpStatus.CREATED);
+        if (personaje.getNombre() != null && personaje.getEdad() != 0) {
+            if (datos.buscarPersonajeConMismoNombreYedad(personaje) != null) {
+                return ResponseEntity.badRequest().body("Ya existe el personaje");
             }
-//TODO REVISAR TODOS LOS CONSTAINSALL SI FUNCIONAN
-            //caso en el que esta intentando agregar peliculas/series al personaje
-            //ya existe el personaje
-            else if (!personajeEncontrado.getPeliculas_series().containsAll(personaje.getPeliculas_series())) {
-                personaje.getPeliculas_series().forEach(pelicula_serie -> {
-                            //se agregan solo aquellas peliculas/series que no estan cargadas
-                            if (!personajeEncontrado.getPeliculas_series().contains(pelicula_serie)) {
-                                personajeEncontrado.getPeliculas_series().add(pelicula_serie);
-                            }
-                        }
-                );
-                return new ResponseEntity<>(personaje, headers, HttpStatus.CREATED);
-            }
-            return ResponseEntity.badRequest().body("Ya existe un personaje con mismo nombre y edad");
+            personaje.setId((long) (this.datos.getPersonajes().size() + 1));
+            this.datos.getPersonajes().add(personaje);
+            return new ResponseEntity<>(personaje, headers, HttpStatus.CREATED);
         }
-        return ResponseEntity.badRequest().body("Los campos: Titulo y Fecha de creación son obligatorios");
+        return ResponseEntity.badRequest().body("Los campos: nombre y edad son obligatorios");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePersonaje(@RequestBody Personaje personaje, @PathVariable Long id) {
-        Personaje personajeEncontrado = this.datos.buscarPersonajeById(id);
-        if (personajeEncontrado == null) {
-            return ResponseEntity.badRequest().body("El personaje que intenta modificar no existe");
-        }
-        personajeEncontrado.setPeso(personaje.getPeso());
-        personajeEncontrado.setEdad(personaje.getEdad());
-        personajeEncontrado.setHistoria(personaje.getHistoria());
-        personajeEncontrado.setNombre(personaje.getNombre());
+        Personaje personajeEncontradoById = this.datos.buscarPersonajeById(id);
+        Personaje personajeEncontradoByNombreAndEdad = this.datos.buscarPersonajeConMismoNombreYedad(personaje);
 
+        if (personajeEncontradoById != null) {
+            if (personajeEncontradoByNombreAndEdad != null && !Objects.equals(personajeEncontradoByNombreAndEdad.getId(), id)) {
+                return ResponseEntity.badRequest().body("Ya existe otro personaje con mismo nombre y edad");
+            }
+            if (personaje.getPeso() != 0.0) {
+                personajeEncontradoById.setPeso(personaje.getPeso());
+            }
+            if (personaje.getEdad() != 0) {
+                personajeEncontradoById.setEdad(personaje.getEdad());
+            }
+            if (personaje.getHistoria() != null) {
+                personajeEncontradoById.setHistoria(personaje.getHistoria());
+            }
 
-        personajeEncontrado.getPeliculas_series();
-        //valida que las peliculas que se quieren asociar al personaje no esten cargados
-        if (!personajeEncontrado.getPeliculas_series().containsAll(personaje.getPeliculas_series())) {
+            if (personaje.getNombre() != null) {
+                personajeEncontradoById.setNombre(personaje.getNombre());
+            }
+
+            //valida que las peliculas que se quieren asociar al personaje no esten cargadas
             personaje.getPeliculas_series().forEach(pelicula ->
                     {
-                        //encuentra aquellas pelicualas q no estan cargados y los agrega
-                        if (!personajeEncontrado.getPeliculas_series().contains(pelicula)) {
-                            personajeEncontrado.getPeliculas_series().add(pelicula);
-                        }
+                        //encuentra aquellas peliculas q no estan cargados al personaje y las agrega
+                        if (!personajeEncontradoById.getPeliculas_series().contains(pelicula)) {
 
+                            //busca la pelicula por su titulo esto para no tener que pasar el obj completo por el body
+                            Pelicula_Serie peliculaEncontrada = this.datos.buscarPeliculaConMismoTitulo(pelicula);
+
+                            //para mantener consistencia si la pelicula que se intenta agregar no existe la crea
+                            if (peliculaEncontrada == null) {
+                                //agregar metodo dar alta cuando lo saque del controller y pase al service
+                            }else {
+                                //si no esta cargada la pelicula al personaje lo agrega
+                                personajeEncontradoById.getPeliculas_series().add(peliculaEncontrada);
+
+                                //actualiza la lista de personajes asiciados a esa pelicula para mantener consistencia
+                                if (!peliculaEncontrada.getPersonajesAsociados().contains(personajeEncontradoById)) {
+                                    peliculaEncontrada.getPersonajesAsociados().add(personajeEncontradoById);
+                                }
+                            }
+                        }
                     }
             );
+            return new ResponseEntity<>(personajeEncontradoById, HttpStatus.OK);
         }
+        return ResponseEntity.badRequest().body("El personaje que intenta modificar no existe");
 
-        return new ResponseEntity<>(personajeEncontrado, HttpStatus.OK);
     }
 
 
