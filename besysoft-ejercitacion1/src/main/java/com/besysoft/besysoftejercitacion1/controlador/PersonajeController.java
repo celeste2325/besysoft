@@ -17,9 +17,11 @@ import java.util.List;
 @RequestMapping("/personajes")
 public class PersonajeController {
     private final PersonajeService personajeService;
+
     public PersonajeController(PersonajeService personajeService) {
         this.personajeService = personajeService;
     }
+
     @GetMapping()
     public ResponseEntity<List<Personaje>> devolverTodosLosPersonajes() {
         return new ResponseEntity<>(this.personajeService.obtenerTodos(), HttpStatus.OK);
@@ -27,11 +29,11 @@ public class PersonajeController {
 
     @GetMapping("/request-param")
     public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) {
-    try {
-        return new ResponseEntity<>(this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad), HttpStatus.OK);
-    } catch (BuscarPorEdadOPorNombreException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
+        try {
+            return new ResponseEntity<>(this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad), HttpStatus.OK);
+        } catch (BuscarPorEdadOPorNombreException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
     }
 
@@ -48,13 +50,14 @@ public class PersonajeController {
         try {
             return new ResponseEntity<>(this.personajeService.altaPersonaje(personaje), headers, HttpStatus.CREATED);
         } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {
-           return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePersonaje(@RequestBody Personaje personaje, @PathVariable Long id) {
         try {
-            return new ResponseEntity<>(this.personajeService.updatePersonaje(personaje,id), HttpStatus.OK);
+            return new ResponseEntity<>(this.personajeService.updatePersonaje(personaje, id), HttpStatus.OK);
         } catch (PersonajeInexistenteException | ElPersonajeExisteException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

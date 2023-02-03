@@ -35,7 +35,7 @@ public class PersonajeServiceImpl implements PersonajeService {
 
     @Override
     public List<Personaje> buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
-        return this.personajeRepository.buscarPersonajesPorRangoDeEdad(desde,hasta);
+        return this.personajeRepository.buscarPersonajesPorRangoDeEdad(desde, hasta);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PersonajeServiceImpl implements PersonajeService {
             if (personajeEncontradoByNombreAndEdad != null && !Objects.equals(personajeEncontradoByNombreAndEdad.getId(), id)) {
                 throw new ElPersonajeExisteException("Ya existe otro personaje con mismo nombre y edad");
             }
-            return this.personajeRepository.modificarPersonaje(personajeEncontradoById,newPersonaje);
+            return this.personajeRepository.modificarPersonaje(personajeEncontradoById, newPersonaje);
         }
         throw new PersonajeInexistenteException("El personaje que intenta modificar no existe");
     }

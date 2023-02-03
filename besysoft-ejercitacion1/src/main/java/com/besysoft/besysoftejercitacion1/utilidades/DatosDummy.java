@@ -82,6 +82,7 @@ public class DatosDummy {
             return this.generos.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
         }
     }
+
     //TODO LISTO
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getFechaCreacion().isAfter(desde) &&
@@ -92,6 +93,7 @@ public class DatosDummy {
     public Object buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
         return this.personajes.stream().filter(personaje -> personaje.getEdad() >= desde && personaje.getEdad() <= hasta);
     }
+
     //TODO LISTO
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getCalificacion() >= desde && pelicula_serie.getCalificacion() <= hasta).collect(Collectors.toList());
@@ -111,6 +113,7 @@ public class DatosDummy {
         return this.getPersonajes().stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())
                 && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
     }
+
     //TODO LISTO
     public Pelicula_Serie buscarPeliculaPorId(Long id) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getId() == id).findAny().orElse(null);
@@ -121,10 +124,12 @@ public class DatosDummy {
         return this.personajes.stream().filter(personaje -> personaje.getId() == id).findAny().orElse(null);
     }
 
+    //TODO LISTO
     public Genero buscarGeneroPorId(Long id) {
         return this.getGeneros().stream().filter(genero -> genero.getId() == id).findAny().orElse(null);
     }
 
+    //TODO LISTO
     public Genero buscarGeneroPorNombre(Genero genero) {
         //se asume que no debe existir 2 generos con mismo nombre
         return this.getGeneros().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero.getNombre())).findAny().orElse(null);

@@ -10,8 +10,12 @@ import java.util.List;
 
 public interface PersonajeService {
     List<Personaje> obtenerTodos();
+
     List<Personaje> buscarPersonajesPorNombreOrEdad(String nombre, int edad) throws BuscarPorEdadOPorNombreException;
+
     List<Personaje> buscarPersonajesPorRangoDeEdad(int desde, int hasta);
+
     Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException, NombreYEdadSonCamposObligatoriosException;
+
     Personaje updatePersonaje(Personaje newPersonaje, Long id) throws PersonajeInexistenteException, ElPersonajeExisteException;
 }

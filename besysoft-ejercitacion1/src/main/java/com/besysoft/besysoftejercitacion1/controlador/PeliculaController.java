@@ -2,10 +2,10 @@ package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElCampoTituloEsObligatorioException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.RangoDeCalificacionExcedidoException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElCampoTituloEsObligatorioException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,11 @@ import java.util.List;
 @RequestMapping("/peliculas")
 public class PeliculaController {
     private final PeliculaService service;
+
     public PeliculaController(PeliculaService peliculaService) {
         this.service = peliculaService;
     }
+
     @GetMapping()
     public ResponseEntity<List<Pelicula_Serie>> obtenerTodos() {
         return new ResponseEntity<>(this.service.obtenerTodos(), HttpStatus.OK);

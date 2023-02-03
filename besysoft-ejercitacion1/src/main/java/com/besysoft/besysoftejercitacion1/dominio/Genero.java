@@ -35,6 +35,7 @@ public class Genero {
                 ", peliculas_series=" + peliculas_seriesAsociadas +
                 '}';
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
