@@ -13,6 +13,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/generos")
 public class GeneroController {
+    //TODO FALTA REFACTOR GENERO
     private final DatosDummy datos;
 
     public GeneroController(DatosDummy datos) {
@@ -25,7 +26,7 @@ public class GeneroController {
 
         //campo nombre es obligatorio
         if (genero.getNombre() != null) {
-            if (datos.buscarGeneroConMismoNombre(genero) == null) {
+            if (datos.buscarGeneroPorNombre(genero) == null) {
                 genero.setId((long) (datos.getGeneros().size() + 1));
                 datos.getGeneros().add(genero);
                 return new ResponseEntity<>(genero, headers, HttpStatus.CREATED);
@@ -38,8 +39,8 @@ public class GeneroController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateGenero(@RequestBody Genero genero, @PathVariable Long id) {
-        Genero generoEncontradoById = this.datos.buscarGeneroById(id);
-        Genero generoEncontradoByNombre = this.datos.buscarGeneroConMismoNombre(genero);
+        Genero generoEncontradoById = this.datos.buscarGeneroPorId(id);
+        Genero generoEncontradoByNombre = this.datos.buscarGeneroPorNombre(genero);
 
         if (generoEncontradoById != null) {
             if (generoEncontradoByNombre != null && !Objects.equals(generoEncontradoByNombre.getId(), id)) {
@@ -55,7 +56,7 @@ public class GeneroController {
                         if (!generoEncontradoById.getPeliculas_seriesAsociadas().contains(pelicula_serie)) {
 
                             //busca la pelicula por su titulo, esto para no tener que pasar el obj completo por el body
-                            Pelicula_Serie peliculaEncontradaByTitulo = this.datos.buscarPeliculaConMismoTitulo(pelicula_serie);
+                            Pelicula_Serie peliculaEncontradaByTitulo = this.datos.buscarPeliculaPorTitulo(pelicula_serie);
 
                             if (peliculaEncontradaByTitulo == null) {
                                 //agregar metodo dar alta cuando lo saque del controller y pase al service

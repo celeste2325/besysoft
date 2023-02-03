@@ -1,8 +1,11 @@
 package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
-import com.besysoft.besysoftejercitacion1.utilidades.DatosDummy;
+import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.RangoDeCalificacionExcedidoException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElCampoTituloEsObligatorioException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,35 +14,33 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
-
-import static java.lang.String.format;
 
 @RestController
 @RequestMapping("/peliculas")
 public class PeliculaController {
-    private final DatosDummy datos;
-    public PeliculaController(DatosDummy datos) {
-        this.datos = datos;
+    private final PeliculaService service;
+    public PeliculaController(PeliculaService peliculaService) {
+        this.service = peliculaService;
     }
     @GetMapping()
-    public ResponseEntity<List<Pelicula_Serie>> getPeliculas() {
-        return new ResponseEntity<>(datos.getPeliculas_series(), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_Serie>> obtenerTodos() {
+        return new ResponseEntity<>(this.service.obtenerTodos(), HttpStatus.OK);
     }
 
-    @GetMapping("/request-param")
-    public ResponseEntity<?> buscarPeliculasPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) {
-        return new ResponseEntity<>(this.datos.getPeliculasByTituloOrGenero(titulo, genero), HttpStatus.OK);
-    }
+    //TODO EVALUAR LA IDEA DE MOVER A CONTROLADOR GENERO
+    /*@GetMapping("/request-param")
+    public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) {
+        return new ResponseEntity<>(this.datos.buscarPeliculasPorTituloOrGenero(titulo, genero), HttpStatus.OK);
+    }*/
 
     @GetMapping("/fechas")
-    public ResponseEntity<List<Pelicula_Serie>> buscarPeliculasPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
-        return new ResponseEntity<>(this.datos.getPeliculasByFecha(desde, hasta), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_Serie>> buscarPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
+        return new ResponseEntity<>(this.service.buscarPeliculasPorRangoDeFecha(desde, hasta), HttpStatus.OK);
     }
 
     @GetMapping("/calificacion")
-    public ResponseEntity<List<Pelicula_Serie>> buscarPeliculasPorRangoDeCalificacion(@RequestParam(defaultValue = "") double desde, @RequestParam(defaultValue = "") double hasta) {
-        return new ResponseEntity<>(this.datos.getPeliculasByRangoDeCalificacion(desde, hasta), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_Serie>> buscarPorRangoDeCalificacion(@RequestParam(defaultValue = "") double desde, @RequestParam(defaultValue = "") double hasta) {
+        return new ResponseEntity<>(this.service.buscarPeliculasPorRangoDeCalificacion(desde, hasta), HttpStatus.OK);
     }
 
     @PostMapping()
@@ -47,68 +48,20 @@ public class PeliculaController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("app-info", "celeste@bootcamp.com");
 
-        //se asumen obligatorios los campos titulo y fecha de creacion.
-        if (pelicula_serie.getTitulo() != null && pelicula_serie.getFechaCreacion() != null) {
-            //la pelicula existe
-            if (datos.buscarPeliculaConMismoTitulo(pelicula_serie) != null) {
-                return ResponseEntity.badRequest().body("Ya existe una pelicula con mismo titulo");
-            } else {
-                pelicula_serie.setId((long) (this.datos.getPeliculas_series().size() + 1));
-                this.datos.getPeliculas_series().add(pelicula_serie);
-                return new ResponseEntity<>(pelicula_serie, headers, HttpStatus.CREATED);
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Los campos: Titulo y Fecha de creación son obligatorios");
+        try {
+            return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), headers, HttpStatus.CREATED);
+        } catch (PeliculaExistenteConMismoTituloException | ElCampoTituloEsObligatorioException |
+                 RangoDeCalificacionExcedidoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePelicula(@RequestBody Pelicula_Serie pelicula_serie, @PathVariable Long id) {
-        Pelicula_Serie peliculaEncontradaPorId = this.datos.buscarPeliculaById(id);
-        Pelicula_Serie peliculaEncontradaPorTitulo = datos.buscarPeliculaConMismoTitulo(pelicula_serie);
-
-        //existe para ser modificada
-        if (peliculaEncontradaPorId != null) {
-            //valida que al modificar la pelicula no se cambie el titulo por uno ya existente
-            if (peliculaEncontradaPorTitulo != null && !Objects.equals(peliculaEncontradaPorTitulo.getId(), id)) {
-                return ResponseEntity.badRequest().body(format("Ya existe una pelicula con mismo titulo: %s", pelicula_serie.getTitulo()));
-            }
-
-            //si vienen datos nulos o vacios no se sobreescriben
-            if (pelicula_serie.getTitulo() != null) {
-                peliculaEncontradaPorId.setTitulo(pelicula_serie.getTitulo());
-            }
-            if (pelicula_serie.getCalificacion() != 0.0) {
-                peliculaEncontradaPorId.setCalificacion(pelicula_serie.getCalificacion());
-            }
-            if (pelicula_serie.getFechaCreacion() != null) {
-                peliculaEncontradaPorId.setFechaCreacion(pelicula_serie.getFechaCreacion());
-            }
-
-            //editar lista de pesonajes asociados a la pelicula
-            pelicula_serie.getPersonajesAsociados().forEach(personaje ->
-                    {
-                        //encuentra aquellos personajes q no estan cargados a la pelicula
-                        if (!peliculaEncontradaPorId.getPersonajesAsociados().contains(personaje)) {
-                            //busca el personaje con ese nombre y edad (asumiendo q son sus datos unicos) esto para no tener que pasar el obj completo por el body
-                            Personaje personajeEncontrado = this.datos.buscarPersonajeConMismoNombreYedad(personaje);
-
-                            //para mantener consistencia si el personaje que se intenta agregar no existe lo crea
-                            if (personajeEncontrado == null) {
-                                //agregar metodo dar alta cuando lo saque del controller y pase al service
-                            }else {
-                                //si no esta cargado el personaje a la pelicula lo agrega
-                                peliculaEncontradaPorId.getPersonajesAsociados().add(personajeEncontrado);
-                                //actualiza tambien la lista de peliculas que tiene ese personaje, siempre que ya no exista la pelicula en la lista.
-                                if (!personajeEncontrado.getPeliculas_series().contains(peliculaEncontradaPorId)) {
-                                    personajeEncontrado.addPelicula_serie(peliculaEncontradaPorId);
-                                }
-                            }
-                        }
-                    }
-            );
-            return new ResponseEntity<>(peliculaEncontradaPorId, HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(this.service.updatePelicula(pelicula_serie, id), HttpStatus.OK);
+        } catch (PeliculaExistenteConMismoTituloException | IdInexistente | RangoDeCalificacionExcedidoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.badRequest().body(format("El ID %d ingresado no existe", id));
     }
 }
