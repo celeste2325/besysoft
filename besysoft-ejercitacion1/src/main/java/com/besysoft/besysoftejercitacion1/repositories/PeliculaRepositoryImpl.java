@@ -16,9 +16,13 @@ import java.util.stream.Collectors;
 public class PeliculaRepositoryImpl implements PeliculaRepository {
     private final List<Pelicula_Serie> peliculas_series;
     private final PersonajeRepository personajeRepository;
+    //TODO EVALUAR SI ESTA BIEN QUE ESTE REPOSITORIO ESTE AQUI A PESAR DE Q LAS PELICULAS NO TENGAN UN ATRIBUTO GENERO SINO
+    //TODO MAS BIEN Q ES EL GENERO QUIEN TIENE LAS PELICULAS.. ESPERAR RESPUESTA DEL PROFESOR MI PREGUNTA EN EL FORO
+    private final GeneroRepository generoRepository;
 
-    public PeliculaRepositoryImpl(@Lazy PersonajeRepository personajeRepository) {
+    public PeliculaRepositoryImpl(@Lazy PersonajeRepository personajeRepository, @Lazy GeneroRepository generoRepository) {
         this.personajeRepository = personajeRepository;
+        this.generoRepository = generoRepository;
         this.peliculas_series = new ArrayList<>(
                 Arrays.asList(
                         new Pelicula_Serie(1L, "Matrix", LocalDate.of(1999, 01, 01), 5.0),
@@ -34,9 +38,16 @@ public class PeliculaRepositoryImpl implements PeliculaRepository {
         return this.peliculas_series;
     }
 
+    //TODO SI PUEDO VERIFICAR LA RESPUESTA CUANDO NO EXISTE EL GENERO DEVUELVE 200 Y UN 1 EN EL BODY.
+    //TODO Y SI NO EXISTE EL TITULO DEVUELVE ERROR 500
     @Override
-    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) {
-        return null;
+    public Object buscarPeliculaPorTituloOrGenero(String titulo, String genero) {
+        if (!titulo.equalsIgnoreCase("") && genero.equalsIgnoreCase("")) {//TODO EVALUAR ESE GET QUE PUEDE ROMPER SI NO ESTA PRESENT
+            return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getTitulo().equalsIgnoreCase(titulo)).distinct().findFirst().orElse(null);
+        } else {
+            return this.generoRepository.obtenerTodos().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
+        }
+
     }
 
     @Override

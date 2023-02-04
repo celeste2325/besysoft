@@ -47,7 +47,6 @@ public class GeneroRepositoryImpl implements GeneroRepository {
 
                         if (peliculaEncontradaByTitulo == null) {
                             peliculaEncontradaByTitulo = this.peliculaRepository.altaPelicula(pelicula_serie);
-                            //agregar metodo dar alta cuando lo saque del controller y pase al service
                         }
                         generoAmodificar.getPeliculas_seriesAsociadas().add(peliculaEncontradaByTitulo);
                     }
@@ -65,5 +64,10 @@ public class GeneroRepositoryImpl implements GeneroRepository {
     public Genero buscarGeneroPorNombre(Genero genero) {
         //se asume que no debe existir 2 generos con mismo nombre
         return this.listaGeneros.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero.getNombre())).findAny().orElse(null);
+    }
+
+    @Override
+    public List<Genero> obtenerTodos() {
+        return this.listaGeneros;
     }
 }

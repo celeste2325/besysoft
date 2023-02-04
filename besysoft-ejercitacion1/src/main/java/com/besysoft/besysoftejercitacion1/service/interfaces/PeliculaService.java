@@ -1,16 +1,14 @@
 package com.besysoft.besysoftejercitacion1.service.interfaces;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElCampoTituloEsObligatorioException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.RangoDeCalificacionExcedidoException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface PeliculaService {
     List<Pelicula_Serie> obtenerTodos();
+    Object buscarPeliculaPorTituloOrGenero(String titulo, String genero) throws BuscarPorGeneroOPorTituloException;
 
     List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta);
 

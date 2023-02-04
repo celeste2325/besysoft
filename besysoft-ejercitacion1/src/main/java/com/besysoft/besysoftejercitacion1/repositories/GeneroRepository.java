@@ -2,6 +2,8 @@ package com.besysoft.besysoftejercitacion1.repositories;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
 
+import java.util.List;
+
 public interface GeneroRepository {
     Genero altaGenero(Genero newGenero);
 
@@ -10,4 +12,6 @@ public interface GeneroRepository {
     Genero buscarGeneroPorId(Long id);
 
     Genero buscarGeneroPorNombre(Genero genero);
+
+    List<Genero>obtenerTodos();
 }

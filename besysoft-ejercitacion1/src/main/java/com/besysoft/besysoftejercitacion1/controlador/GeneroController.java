@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/generos")
 public class GeneroController {
-    //TODO ya esta el refactor de genero, probarlo.
     private final GeneroService generoService;
 
     public GeneroController(GeneroService generoService) {

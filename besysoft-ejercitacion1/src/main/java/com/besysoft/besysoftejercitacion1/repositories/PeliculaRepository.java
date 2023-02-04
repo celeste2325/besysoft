@@ -8,7 +8,7 @@ import java.util.List;
 public interface PeliculaRepository {
     List<Pelicula_Serie> obtenerTodos();
 
-    List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero);
+    Object buscarPeliculaPorTituloOrGenero(String titulo, String genero);
 
     List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta);
 

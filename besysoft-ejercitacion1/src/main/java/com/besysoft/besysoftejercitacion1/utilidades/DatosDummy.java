@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @Service
+@Deprecated
 public class DatosDummy {
 
     private List<Genero> generos;
@@ -62,7 +63,6 @@ public class DatosDummy {
     }
 
     //devuelve Object porq en un caso retorna distintos tipos de datos, de acuerdo al if
-    //TODO LISTO
     public Object buscarPersonajesPorNombreOrEdad(String nombre, int edad) {
         if (!nombre.equalsIgnoreCase("") && edad != 0) {
             return "buscar por nombre o por edad";
@@ -72,7 +72,6 @@ public class DatosDummy {
     }
 
     //devuelve Object porq en un caso retorna distintos tipos de datos, de acuerdo al if
-    //TODO EVALUAR LA POSIBILIDAD DE LLEVAR ESTE METODO AL CONTROLER
     public Object buscarPeliculasPorTituloOrGenero(String titulo, String genero) {
         if (!titulo.equalsIgnoreCase("") && !genero.equalsIgnoreCase("")) {
             return "buscar por genero o por titulo";
@@ -82,25 +81,19 @@ public class DatosDummy {
             return this.generos.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
         }
     }
-
-    //TODO LISTO
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getFechaCreacion().isAfter(desde) &&
                 pelicula_serie.getFechaCreacion().isBefore(hasta)).collect(Collectors.toList());
     }
-
-    //TODO LISTO
     public Object buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
         return this.personajes.stream().filter(personaje -> personaje.getEdad() >= desde && personaje.getEdad() <= hasta);
     }
 
-    //TODO LISTO
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getCalificacion() >= desde && pelicula_serie.getCalificacion() <= hasta).collect(Collectors.toList());
     }
 
     //se valida que no exista pelicula con mismo titulo
-    //TODO LISTO
     public Pelicula_Serie buscarPeliculaPorTitulo(Pelicula_Serie pelicula_serie) {
         return this.getPeliculas_series().stream().filter(pelicula ->
                 pelicula.getTitulo().
@@ -108,28 +101,19 @@ public class DatosDummy {
     }
 
     //se asume que no debe existir 2 peresonajes con mismo nombre y misma edad
-    //TODO LISTO
     public Personaje buscarPersonajePorNombreYedad(Personaje personaje) {
         return this.getPersonajes().stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())
                 && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
     }
-
-    //TODO LISTO
     public Pelicula_Serie buscarPeliculaPorId(Long id) {
         return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getId() == id).findAny().orElse(null);
     }
-
-    //TODO LISTO
     public Personaje buscarPersonajePorId(Long id) {
         return this.personajes.stream().filter(personaje -> personaje.getId() == id).findAny().orElse(null);
     }
-
-    //TODO LISTO
     public Genero buscarGeneroPorId(Long id) {
         return this.getGeneros().stream().filter(genero -> genero.getId() == id).findAny().orElse(null);
     }
-
-    //TODO LISTO
     public Genero buscarGeneroPorNombre(Genero genero) {
         //se asume que no debe existir 2 generos con mismo nombre
         return this.getGeneros().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero.getNombre())).findAny().orElse(null);
