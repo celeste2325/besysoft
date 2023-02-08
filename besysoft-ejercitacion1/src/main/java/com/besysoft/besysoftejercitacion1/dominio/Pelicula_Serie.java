@@ -1,10 +1,10 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +12,34 @@ import java.util.Objects;
 
 @Setter
 @Getter
-public class Pelicula_Serie {
+@Entity
+@Table(name = "Peliculas")
+public class Pelicula_Serie implements Serializable {
 
-    @JsonIgnore
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String titulo;
+
+    @Column
     private LocalDate fechaCreacion;
+    @Column
     private double calificacion;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Personaje> personajesAsociados;
+    @ManyToMany(mappedBy = "peliculas_series", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    private List<Personaje> personajes;
 
     public Pelicula_Serie(Long id, String titulo, LocalDate fechaCreacion, double calificacion) {
         this.id = id;
         this.titulo = titulo;
         this.fechaCreacion = fechaCreacion;
         this.calificacion = calificacion;
-        this.personajesAsociados = new ArrayList<>();
+        this.personajes = new ArrayList<>();
+    }
+
+    public Pelicula_Serie() {
+
     }
 
     @Override
@@ -36,7 +48,7 @@ public class Pelicula_Serie {
                 "titulo='" + titulo + '\'' +
                 ", fechaCreacion=" + fechaCreacion +
                 ", calificacion=" + calificacion +
-                ", personajesAsociados=" + personajesAsociados +
+                ", personajesAsociados=" + personajes +
                 '}';
     }
 

@@ -45,7 +45,7 @@ public class PeliculaRepositoryImpl implements PeliculaRepository {
         if (!titulo.equalsIgnoreCase("") && genero.equalsIgnoreCase("")) {//TODO EVALUAR ESE GET QUE PUEDE ROMPER SI NO ESTA PRESENT
             return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getTitulo().equalsIgnoreCase(titulo)).distinct().findFirst().orElse(null);
         } else {
-            return this.generoRepository.obtenerTodos().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
+            return this.generoRepository.obtenerTodos().stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_series();
         }
 
     }
@@ -94,10 +94,10 @@ public class PeliculaRepositoryImpl implements PeliculaRepository {
         }
 
         //editar lista de pesonajes asociados a la pelicula
-        peliculaNew.getPersonajesAsociados().forEach(personaje ->
+        peliculaNew.getPersonajes().forEach(personaje ->
                 {
                     //encuentra aquellos personajes q no estan cargados a la pelicula
-                    if (!peliculaEncontrada.getPersonajesAsociados().contains(personaje)) {
+                    if (!peliculaEncontrada.getPersonajes().contains(personaje)) {
                         //busca el personaje con ese nombre y edad (asumiendo q son sus datos unicos) esto para no tener que pasar el obj completo por el body
                         Personaje personajeEncontrado = this.personajeRepository.buscarPersonajePorNombreYedad(personaje);
 
@@ -107,7 +107,7 @@ public class PeliculaRepositoryImpl implements PeliculaRepository {
 
                         }
                         //si no esta cargado el personaje a la pelicula lo agrega
-                        peliculaEncontrada.getPersonajesAsociados().add(personajeEncontrado);
+                        peliculaEncontrada.getPersonajes().add(personajeEncontrado);
                         //actualiza tambien la lista de peliculas que tiene ese personaje, siempre que ya no exista la pelicula en la lista.
                         if (!personajeEncontrado.getPeliculas_series().contains(peliculaEncontrada)) {
                             personajeEncontrado.addPelicula_serie(peliculaEncontrada);

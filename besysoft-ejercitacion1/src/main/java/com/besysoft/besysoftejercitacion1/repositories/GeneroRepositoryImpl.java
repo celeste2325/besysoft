@@ -37,10 +37,10 @@ public class GeneroRepositoryImpl implements GeneroRepository {
             generoAmodificar.setNombre(newGenero.getNombre());
         }
         //valida que las peliculas que se quieren asociar al genero no esten cargados
-        newGenero.getPeliculas_seriesAsociadas().forEach(pelicula_serie ->
+        newGenero.getPeliculas_series().forEach(pelicula_serie ->
                 {
                     //encuentra aquellas peliculas q no estan cargadas y las agrega
-                    if (!generoAmodificar.getPeliculas_seriesAsociadas().contains(pelicula_serie)) {
+                    if (!generoAmodificar.getPeliculas_series().contains(pelicula_serie)) {
 
                         //busca la pelicula por su titulo, esto para no tener que pasar el obj completo por el body
                         Pelicula_Serie peliculaEncontradaByTitulo = this.peliculaRepository.buscarPeliculaPorTitulo(pelicula_serie);
@@ -48,7 +48,7 @@ public class GeneroRepositoryImpl implements GeneroRepository {
                         if (peliculaEncontradaByTitulo == null) {
                             peliculaEncontradaByTitulo = this.peliculaRepository.altaPelicula(pelicula_serie);
                         }
-                        generoAmodificar.getPeliculas_seriesAsociadas().add(peliculaEncontradaByTitulo);
+                        generoAmodificar.getPeliculas_series().add(peliculaEncontradaByTitulo);
                     }
                 }
         );

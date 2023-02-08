@@ -1,11 +1,13 @@
 package com.besysoft.besysoftejercitacion1.repositories;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface PeliculaRepository {
+public interface PeliculaRepository extends CrudRepository<Pelicula_Serie, Long> {
     List<Pelicula_Serie> obtenerTodos();
 
     Object buscarPeliculaPorTituloOrGenero(String titulo, String genero);

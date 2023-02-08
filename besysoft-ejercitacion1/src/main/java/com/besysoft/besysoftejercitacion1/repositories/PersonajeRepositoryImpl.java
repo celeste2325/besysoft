@@ -96,8 +96,8 @@ public class PersonajeRepositoryImpl implements PersonajeRepository {
                         personajeAmodificar.getPeliculas_series().add(peliculaEncontrada);
 
                         //actualiza la lista de personajes asiciados a esa pelicula para mantener consistencia
-                        if (!peliculaEncontrada.getPersonajesAsociados().contains(personajeAmodificar)) {
-                            peliculaEncontrada.getPersonajesAsociados().add(personajeAmodificar);
+                        if (!peliculaEncontrada.getPersonajes().contains(personajeAmodificar)) {
+                            peliculaEncontrada.getPersonajes().add(personajeAmodificar);
                         }
                     }
                 }

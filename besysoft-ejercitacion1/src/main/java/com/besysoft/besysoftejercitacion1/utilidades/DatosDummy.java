@@ -78,7 +78,7 @@ public class DatosDummy {
         } else if (!titulo.equalsIgnoreCase("") && genero.equalsIgnoreCase("")) {
             return this.peliculas_series.stream().filter(pelicula_serie -> pelicula_serie.getTitulo().equalsIgnoreCase(titulo)).distinct().findFirst().get();
         } else {
-            return this.generos.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_seriesAsociadas();
+            return this.generos.stream().filter(genero1 -> genero1.getNombre().equalsIgnoreCase(genero)).collect(Collectors.toList()).get(0).getPeliculas_series();
         }
     }
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {

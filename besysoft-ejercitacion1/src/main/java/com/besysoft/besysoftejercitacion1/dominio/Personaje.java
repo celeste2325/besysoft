@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,13 +13,28 @@ import java.util.Objects;
 
 @Setter
 @Getter
-public class Personaje {
-    @JsonIgnore
+@Entity(name = "personajes")
+public class Personaje implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String nombre;
+    @Column(nullable = false, unique = true)
     private int edad;
+    @Column
     private double peso;
+    @Column
     private String historia;
+    @Column
+    @JoinColumn(name = "peliculaId")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "personajesAsociadosApeliculas",
+            joinColumns = @JoinColumn(name = "personajeId"),
+            inverseJoinColumns = @JoinColumn(name = "peliculaId")
+    )
     private List<Pelicula_Serie> peliculas_series;
 
     public Personaje(Long id, String nombre, int edad, double peso, String historia) {
@@ -27,6 +44,10 @@ public class Personaje {
         this.peso = peso;
         this.historia = historia;
         this.peliculas_series = new ArrayList<>();
+    }
+
+    public Personaje() {
+
     }
 
     public void addPelicula_serie(Pelicula_Serie... pelicula_serie) {
