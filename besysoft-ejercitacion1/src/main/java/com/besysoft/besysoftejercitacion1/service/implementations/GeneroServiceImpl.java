@@ -22,7 +22,7 @@ public class GeneroServiceImpl implements GeneroService {
     public Genero altaGenero(Genero newGenero) throws YaExisteGeneroConMismoNombreException, CampoNombreEsObligatorioException {
         //campo nombre es obligatorio
         if (newGenero.getNombre() != null) {
-            if (this.generoRepository.buscarGeneroPorNombre(newGenero) == null) {
+            if (this.generoRepository.buscarGeneroPorNombre(newGenero.getNombre()) == null) {
                 return this.generoRepository.altaGenero(newGenero);
             } else {
                 throw new YaExisteGeneroConMismoNombreException("Ya existe una genero con mismo nombre");
@@ -34,7 +34,7 @@ public class GeneroServiceImpl implements GeneroService {
     @Override
     public Genero updateGenero(Genero newGenero, Long id) throws YaExisteGeneroConMismoNombreException, GeneroInexistenteException {
         Genero generoEncontradoById = this.generoRepository.buscarGeneroPorId(id);
-        Genero generoEncontradoByNombre = this.generoRepository.buscarGeneroPorNombre(newGenero);
+        Genero generoEncontradoByNombre = this.generoRepository.buscarGeneroPorNombre(newGenero.getNombre());
 
         if (generoEncontradoById != null) {
             if (generoEncontradoByNombre != null && !Objects.equals(generoEncontradoByNombre.getId(), id)) {

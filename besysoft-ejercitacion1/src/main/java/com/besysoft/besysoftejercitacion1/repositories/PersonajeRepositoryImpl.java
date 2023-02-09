@@ -1,8 +1,6 @@
 package com.besysoft.besysoftejercitacion1.repositories;
 
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.dominio.Personaje;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,11 +12,8 @@ import java.util.stream.Collectors;
 public class PersonajeRepositoryImpl implements PersonajeRepository {
 
     private final List<Personaje> listaDePersonajes;
-    private final PeliculaRepository peliculaRepository;
 
-    public PersonajeRepositoryImpl(@Lazy PeliculaRepository peliculaRepository) {
-        this.peliculaRepository = peliculaRepository;
-
+    public PersonajeRepositoryImpl() {
         this.listaDePersonajes = new ArrayList<>(
                 Arrays.asList(
                         new Personaje(1L, "Keanu Charles Reeves", 58, 58.0, "mejor conocido como Keanu Reeves es un actor y " +
@@ -65,19 +60,11 @@ public class PersonajeRepositoryImpl implements PersonajeRepository {
 
     @Override
     public Personaje modificarPersonaje(Personaje personajeAmodificar, Personaje personajeNew) {
-        if (personajeNew.getPeso() != 0.0) {
-            personajeAmodificar.setPeso(personajeNew.getPeso());
-        }
-        if (personajeNew.getEdad() != 0) {
-            personajeAmodificar.setEdad(personajeNew.getEdad());
-        }
-        if (personajeNew.getHistoria() != null) {
-            personajeAmodificar.setHistoria(personajeNew.getHistoria());
-        }
 
-        if (personajeNew.getNombre() != null) {
-            personajeAmodificar.setNombre(personajeNew.getNombre());
-        }
+        personajeAmodificar.setPeso(personajeNew.getPeso());
+        personajeAmodificar.setEdad(personajeNew.getEdad());
+        personajeAmodificar.setHistoria(personajeNew.getHistoria());
+        personajeAmodificar.setNombre(personajeNew.getNombre());
 
         //valida que las peliculas que se quieren asociar al personaje no esten cargadas
         personajeNew.getPeliculas_series().forEach(pelicula ->
@@ -85,20 +72,8 @@ public class PersonajeRepositoryImpl implements PersonajeRepository {
                     //encuentra aquellas peliculas q no estan cargados al personaje y las agrega
                     if (!personajeAmodificar.getPeliculas_series().contains(pelicula)) {
 
-                        //busca la pelicula por su titulo esto para no tener que pasar el obj completo por el body
-                        Pelicula_Serie peliculaEncontrada = this.peliculaRepository.buscarPeliculaPorTitulo(pelicula);
-
-                        //Si la pelicula que se intenta agregar no existe la crea
-                        if (peliculaEncontrada == null) {
-                            peliculaEncontrada = this.peliculaRepository.altaPelicula(pelicula);
-                        }
                         //si no esta cargada la pelicula al personaje lo agrega
-                        personajeAmodificar.getPeliculas_series().add(peliculaEncontrada);
-
-                        //actualiza la lista de personajes asiciados a esa pelicula para mantener consistencia
-                        if (!peliculaEncontrada.getPersonajesAsociados().contains(personajeAmodificar)) {
-                            peliculaEncontrada.getPersonajesAsociados().add(personajeAmodificar);
-                        }
+                        personajeAmodificar.getPeliculas_series().add(pelicula);
                     }
                 }
         );

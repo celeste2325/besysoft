@@ -44,11 +44,9 @@ public class PersonajeController {
 
     @PostMapping()
     public ResponseEntity<?> AltaPersonaje(@RequestBody Personaje personaje) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("app-info", "celeste@bootcamp.com");
 
         try {
-            return new ResponseEntity<>(this.personajeService.altaPersonaje(personaje), headers, HttpStatus.CREATED);
+            return new ResponseEntity<>(this.personajeService.altaPersonaje(personaje), HttpStatus.CREATED);
         } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

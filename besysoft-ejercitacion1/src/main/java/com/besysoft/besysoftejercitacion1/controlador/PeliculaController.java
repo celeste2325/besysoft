@@ -2,10 +2,7 @@ package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElCampoTituloEsObligatorioException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.RangoDeCalificacionExcedidoException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +16,6 @@ import java.util.List;
 @RequestMapping("/peliculas")
 public class PeliculaController {
     private final PeliculaService service;
-
     public PeliculaController(PeliculaService peliculaService) {
         this.service = peliculaService;
     }
@@ -29,11 +25,15 @@ public class PeliculaController {
         return new ResponseEntity<>(this.service.obtenerTodos(), HttpStatus.OK);
     }
 
-    //TODO EVALUAR LA IDEA DE MOVER A CONTROLADOR GENERO
-    /*@GetMapping("/request-param")
+    @GetMapping("/request-param")
     public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) {
-        return new ResponseEntity<>(this.datos.buscarPeliculasPorTituloOrGenero(titulo, genero), HttpStatus.OK);
-    }*/
+
+        try {
+            return new ResponseEntity<>(this.service.buscarPeliculasPorTituloOrGenero(titulo, genero), HttpStatus.OK);
+        } catch (BuscarPorGeneroOtituloException | GeneroInexistenteException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/fechas")
     public ResponseEntity<List<Pelicula_Serie>> buscarPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
@@ -47,11 +47,9 @@ public class PeliculaController {
 
     @PostMapping()
     public ResponseEntity<?> AltaPelicula(@RequestBody Pelicula_Serie pelicula_serie) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("app-info", "celeste@bootcamp.com");
 
         try {
-            return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), headers, HttpStatus.CREATED);
+            return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), HttpStatus.CREATED);
         } catch (PeliculaExistenteConMismoTituloException | ElCampoTituloEsObligatorioException |
                  RangoDeCalificacionExcedidoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
