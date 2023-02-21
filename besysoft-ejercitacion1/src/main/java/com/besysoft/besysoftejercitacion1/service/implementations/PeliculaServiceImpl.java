@@ -2,10 +2,11 @@ package com.besysoft.besysoftejercitacion1.service.implementations;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.repositories.GeneroRepository;
-import com.besysoft.besysoftejercitacion1.repositories.PeliculaRepository;
+import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
+import com.besysoft.besysoftejercitacion1.repositories.memory.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import static java.lang.String.format;
 
 @Service
+@ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "memory")
 public class PeliculaServiceImpl implements PeliculaService {
     private final PeliculaRepository peliculaRepository;
     private final GeneroRepository generoRepository;
@@ -51,8 +53,8 @@ public class PeliculaServiceImpl implements PeliculaService {
         }
         Genero generoEncontrado = this.generoRepository.buscarGeneroPorNombre(nombreGenero);
         if (generoEncontrado != null) {
-            return generoEncontrado.getPeliculas_seriesAsociadas();
-        }else {
+            return generoEncontrado.getPeliculas_series();
+        } else {
             throw new GeneroInexistenteException("No existe el genero : " + nombreGenero);
         }
     }

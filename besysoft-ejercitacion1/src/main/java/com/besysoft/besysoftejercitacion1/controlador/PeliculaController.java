@@ -4,18 +4,22 @@ import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/peliculas")
 public class PeliculaController {
     private final PeliculaService service;
+
     public PeliculaController(PeliculaService peliculaService) {
         this.service = peliculaService;
     }
@@ -46,16 +50,20 @@ public class PeliculaController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPelicula(@RequestBody Pelicula_Serie pelicula_serie) {
-
+    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result) throws RangoDeCalificacionExcedidoException, ElCampoTituloEsObligatorioException {
+        Map<String, Object> validaciones = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(validaciones);
+        }
         try {
             return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), HttpStatus.CREATED);
-        } catch (PeliculaExistenteConMismoTituloException | ElCampoTituloEsObligatorioException |
-                 RangoDeCalificacionExcedidoException e) {
+        } catch (PeliculaExistenteConMismoTituloException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    //TODO REVISAR PORQ NO DEVUELVE LAS VALIDACIONES DE BASE DE DATOS POR EJM LA DE CALIFICACION
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePelicula(@RequestBody Pelicula_Serie pelicula_serie, @PathVariable Long id) {
         try {

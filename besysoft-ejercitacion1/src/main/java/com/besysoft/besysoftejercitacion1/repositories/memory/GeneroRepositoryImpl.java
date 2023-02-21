@@ -1,13 +1,11 @@
-package com.besysoft.besysoftejercitacion1.repositories;
+package com.besysoft.besysoftejercitacion1.repositories.memory;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class GeneroRepositoryImpl implements GeneroRepository {
@@ -34,11 +32,11 @@ public class GeneroRepositoryImpl implements GeneroRepository {
     public Genero updateGenero(Genero generoAmodificar, Genero newGenero) {
         generoAmodificar.setNombre(newGenero.getNombre());
         //valida que las peliculas que se quieren asociar al genero no esten cargados
-        newGenero.getPeliculas_seriesAsociadas().forEach(pelicula_serie ->
+        newGenero.getPeliculas_series().forEach(pelicula_serie ->
                 {
                     //encuentra aquellas peliculas q no estan cargadas y las agrega
-                    if (!generoAmodificar.getPeliculas_seriesAsociadas().contains(pelicula_serie)) {
-                        generoAmodificar.getPeliculas_seriesAsociadas().add(pelicula_serie);
+                    if (!generoAmodificar.getPeliculas_series().contains(pelicula_serie)) {
+                        generoAmodificar.getPeliculas_series().add(pelicula_serie);
                     }
                 }
         );

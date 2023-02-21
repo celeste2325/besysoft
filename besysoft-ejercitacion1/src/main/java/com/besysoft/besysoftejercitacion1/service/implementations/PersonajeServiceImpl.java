@@ -1,18 +1,20 @@
 package com.besysoft.besysoftejercitacion1.service.implementations;
 
 import com.besysoft.besysoftejercitacion1.dominio.Personaje;
-import com.besysoft.besysoftejercitacion1.repositories.PersonajeRepository;
+import com.besysoft.besysoftejercitacion1.repositories.memory.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "memory")
 public class PersonajeServiceImpl implements PersonajeService {
     private final PersonajeRepository personajeRepository;
 

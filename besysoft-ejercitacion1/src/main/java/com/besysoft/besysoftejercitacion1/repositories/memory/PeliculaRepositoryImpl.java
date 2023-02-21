@@ -1,4 +1,4 @@
-package com.besysoft.besysoftejercitacion1.repositories;
+package com.besysoft.besysoftejercitacion1.repositories.memory;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import org.springframework.stereotype.Repository;
@@ -68,13 +68,13 @@ public class PeliculaRepositoryImpl implements PeliculaRepository {
         peliculaEncontrada.setFechaCreacion(peliculaNew.getFechaCreacion());
 
         //editar lista de pesonajes asociados a la pelicula
-        peliculaNew.getPersonajesAsociados().forEach(personaje ->
+        peliculaNew.getPersonajes().forEach(personaje ->
                 {
                     //encuentra aquellos personajes q no estan cargados a la pelicula
-                    if (!peliculaEncontrada.getPersonajesAsociados().contains(personaje)) {
+                    if (!peliculaEncontrada.getPersonajes().contains(personaje)) {
 
                         //si no esta cargado el personaje a la pelicula lo agrega
-                        peliculaEncontrada.getPersonajesAsociados().add(personaje);
+                        peliculaEncontrada.getPersonajes().add(personaje);
                     }
                 }
         );

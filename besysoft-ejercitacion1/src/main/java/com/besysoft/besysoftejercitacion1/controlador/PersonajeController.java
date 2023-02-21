@@ -6,12 +6,15 @@ import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPo
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/personajes")
@@ -43,8 +46,12 @@ public class PersonajeController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPersonaje(@RequestBody Personaje personaje) {
-
+    public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody Personaje personaje, BindingResult result) {
+        Map<String, Object> validaciones = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(validaciones);
+        }
         try {
             return new ResponseEntity<>(this.personajeService.altaPersonaje(personaje), HttpStatus.CREATED);
         } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {

@@ -12,6 +12,7 @@ public interface PeliculaService {
     List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta);
 
     List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta);
+
     List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws BuscarPorGeneroOtituloException, GeneroInexistenteException;
 
     Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteConMismoTituloException, ElCampoTituloEsObligatorioException, RangoDeCalificacionExcedidoException;

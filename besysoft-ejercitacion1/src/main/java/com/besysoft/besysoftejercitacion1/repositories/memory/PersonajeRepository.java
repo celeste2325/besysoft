@@ -1,4 +1,4 @@
-package com.besysoft.besysoftejercitacion1.repositories;
+package com.besysoft.besysoftejercitacion1.repositories.memory;
 
 import com.besysoft.besysoftejercitacion1.dominio.Personaje;
 

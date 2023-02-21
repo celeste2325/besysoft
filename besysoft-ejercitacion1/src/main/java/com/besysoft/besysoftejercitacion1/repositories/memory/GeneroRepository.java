@@ -1,9 +1,6 @@
-package com.besysoft.besysoftejercitacion1.repositories;
+package com.besysoft.besysoftejercitacion1.repositories.memory;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
-
-import java.util.List;
 
 public interface GeneroRepository {
     Genero altaGenero(Genero newGenero);

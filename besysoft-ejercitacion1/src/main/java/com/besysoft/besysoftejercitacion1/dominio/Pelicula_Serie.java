@@ -1,10 +1,17 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +19,47 @@ import java.util.Objects;
 
 @Setter
 @Getter
-public class Pelicula_Serie {
-
+@NoArgsConstructor
+@Entity
+@Table(name = "peliculas")
+public class Pelicula_Serie implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+    @NotNull
+    @NotEmpty
+    @Column(nullable = false, unique = true)
     private String titulo;
+    @Column
     private LocalDate fechaCreacion;
+    @DecimalMin(value = "1.0", message = "La calificación permitida es de 1 hasta 5")
+    @DecimalMax(value = "5.0", message = "La calificación permitida es de 1 hasta 5")
+    @Column
     private double calificacion;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Personaje> personajesAsociados;
+
+    @ManyToOne()
+    @JsonBackReference(value = "genero-pelicula")
+    private Genero genero;
+
+    //TODO LEER ACERCA DE MANY TO MANY DE LOS 2 LADOS NECESITA EL JOINTABLE? NO NECESITA MAPEDBY
+    //TODO LEER LA UTILIDAD DEL @JsonBackReference(value = "personaje-pelicula")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference(value = "personaje-pelicula")
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JoinTable(
+            name = "personajesAsociadosApeliculas",
+            joinColumns = @JoinColumn(name = "personaje_id"),
+            inverseJoinColumns = @JoinColumn(name = "pelicula_id")
+    )
+    private List<Personaje> personajes;
 
     public Pelicula_Serie(Long id, String titulo, LocalDate fechaCreacion, double calificacion) {
         this.id = id;
         this.titulo = titulo;
         this.fechaCreacion = fechaCreacion;
         this.calificacion = calificacion;
-        this.personajesAsociados = new ArrayList<>();
+        this.personajes = new ArrayList<>();
     }
 
     @Override
@@ -36,7 +68,7 @@ public class Pelicula_Serie {
                 "titulo='" + titulo + '\'' +
                 ", fechaCreacion=" + fechaCreacion +
                 ", calificacion=" + calificacion +
-                ", personajesAsociados=" + personajesAsociados +
+                ", personajesAsociados=" + personajes +
                 '}';
     }
 

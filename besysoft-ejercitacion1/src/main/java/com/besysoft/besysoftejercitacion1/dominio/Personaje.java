@@ -1,9 +1,13 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,13 +15,25 @@ import java.util.Objects;
 
 @Setter
 @Getter
-public class Personaje {
+@NoArgsConstructor
+@Entity
+@Table(name = "personajes")
+public class Personaje implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+    @Column(nullable = false, unique = true)
     private String nombre;
+    @Column(nullable = false, unique = true)
     private int edad;
+    @Column
     private double peso;
+    @Column
     private String historia;
+    @Column
+    @JsonBackReference(value = "personaje-pelicula")
+    @ManyToMany(mappedBy = "personajes", fetch = FetchType.LAZY)
     private List<Pelicula_Serie> peliculas_series;
 
     public Personaje(Long id, String nombre, int edad, double peso, String historia) {

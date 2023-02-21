@@ -1,16 +1,18 @@
 package com.besysoft.besysoftejercitacion1.service.implementations;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
-import com.besysoft.besysoftejercitacion1.repositories.GeneroRepository;
+import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.CampoNombreEsObligatorioException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "memory")
 public class GeneroServiceImpl implements GeneroService {
     private final GeneroRepository generoRepository;
 
