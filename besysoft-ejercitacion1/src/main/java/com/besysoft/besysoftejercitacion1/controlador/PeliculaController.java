@@ -31,10 +31,13 @@ public class PeliculaController {
 
     @GetMapping("/request-param")
     public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) {
-
+        //no admite AND es or
+        if (!genero.equalsIgnoreCase("") && !titulo.equalsIgnoreCase("")) {
+            return ResponseEntity.badRequest().body("Debe Buscar o por titulo o por Genero. No se admiten ambos");
+        }
         try {
             return new ResponseEntity<>(this.service.buscarPeliculasPorTituloOrGenero(titulo, genero), HttpStatus.OK);
-        } catch (BuscarPorGeneroOtituloException | GeneroInexistenteException e) {
+        } catch (GeneroInexistenteException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -62,10 +65,13 @@ public class PeliculaController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    //TODO REVISAR PORQ NO DEVUELVE LAS VALIDACIONES DE BASE DE DATOS POR EJM LA DE CALIFICACION
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePelicula(@RequestBody Pelicula_Serie pelicula_serie, @PathVariable Long id) {
+    public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result, @PathVariable Long id) {
+        Map<String, Object> validaciones = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(validaciones);
+        }
         try {
             return new ResponseEntity<>(this.service.updatePelicula(pelicula_serie, id), HttpStatus.OK);
         } catch (PeliculaExistenteConMismoTituloException | IdInexistente | RangoDeCalificacionExcedidoException e) {

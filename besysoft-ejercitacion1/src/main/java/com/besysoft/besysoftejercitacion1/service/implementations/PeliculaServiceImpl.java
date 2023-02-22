@@ -43,10 +43,7 @@ public class PeliculaServiceImpl implements PeliculaService {
     }
 
     @Override
-    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String nombreGenero) throws BuscarPorGeneroOtituloException, GeneroInexistenteException {
-        if (!titulo.equalsIgnoreCase("") && !nombreGenero.equalsIgnoreCase("")) {
-            throw new BuscarPorGeneroOtituloException("Buscar por genero o por titulo");
-        }
+    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String nombreGenero) throws GeneroInexistenteException {
         if (!titulo.equalsIgnoreCase("") && nombreGenero.equalsIgnoreCase("")) {
             return this.peliculaRepository.buscarPeliculaPorTitulo(titulo);
 

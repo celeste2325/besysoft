@@ -39,7 +39,12 @@ public class GeneroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateGenero(@RequestBody Genero genero, @PathVariable Long id) {
+    public ResponseEntity<?> updateGenero(@Valid @RequestBody Genero genero , BindingResult result, @PathVariable Long id) {
+        Map<String, Object> validaciones = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(validaciones);
+        }
         try {
             return new ResponseEntity<>(this.generoService.updateGenero(genero, id), HttpStatus.OK);
         } catch (YaExisteGeneroConMismoNombreException | GeneroInexistenteException e) {

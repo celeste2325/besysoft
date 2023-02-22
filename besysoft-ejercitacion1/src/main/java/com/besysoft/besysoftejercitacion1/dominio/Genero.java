@@ -29,7 +29,7 @@ public class Genero implements Serializable {
     @Column(nullable = false, length = 50, unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "genero",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "genero", fetch = FetchType.LAZY)
     @JsonManagedReference(value = "genero-pelicula")
     private List<Pelicula_Serie> peliculas_series;
 

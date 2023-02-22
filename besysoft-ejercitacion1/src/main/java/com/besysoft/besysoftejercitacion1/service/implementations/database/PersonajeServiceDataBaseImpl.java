@@ -19,7 +19,6 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
         this.personajeRepository = personajeRepository;
     }
 
-
     @Override
     public List<Personaje> obtenerTodos() {
         return this.personajeRepository.findAll();
@@ -40,7 +39,7 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
         try {
             return this.personajeRepository.save(newPersonaje);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            throw new ElPersonajeExisteException("Ya existe un personaje con misma nombre y edad");
+            throw new ElPersonajeExisteException("Ya existe un personaje con misma nombre");
         }
     }
 
@@ -57,12 +56,11 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
                     {
                         //encuentra aquellas peliculas q no estan cargados al personaje y las agrega
                         if (!personajeEncontrado.getPeliculas_series().contains(pelicula)) {
-
-                            //si no esta cargada la pelicula al personaje lo agrega
                             personajeEncontrado.getPeliculas_series().add(pelicula);
                         }
                     }
             );
+            //para reutilizar la validacion de unique
             return this.altaPersonaje(personajeEncontrado);
         }
         throw new PersonajeInexistenteException("El id ingresado no existe");

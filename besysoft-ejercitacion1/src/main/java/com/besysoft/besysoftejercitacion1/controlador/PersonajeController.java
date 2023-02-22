@@ -60,7 +60,12 @@ public class PersonajeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePersonaje(@RequestBody Personaje personaje, @PathVariable Long id) {
+    public ResponseEntity<?> updatePersonaje(@Valid @RequestBody Personaje personaje, BindingResult result, @PathVariable Long id) {
+        Map<String, Object> validaciones = new HashMap<>();
+        if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(validaciones);
+        }
         try {
             return new ResponseEntity<>(this.personajeService.updatePersonaje(personaje, id), HttpStatus.OK);
         } catch (PersonajeInexistenteException | ElPersonajeExisteException e) {

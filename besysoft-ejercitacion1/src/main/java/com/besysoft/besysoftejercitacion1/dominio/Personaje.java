@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +26,10 @@ public class Personaje implements Serializable {
     @JsonIgnore
     private Long id;
     @Column(nullable = false, unique = true)
+    @NotNull
+    @NotEmpty
     private String nombre;
-    @Column(nullable = false, unique = true)
+    @Column()
     private int edad;
     @Column
     private double peso;
@@ -33,7 +37,13 @@ public class Personaje implements Serializable {
     private String historia;
     @Column
     @JsonBackReference(value = "personaje-pelicula")
-    @ManyToMany(mappedBy = "personajes", fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //utilizo @JoinTable en las 2 entidades para hacer insert/update de forma bidireccional
+    @JoinTable(
+            name = "personajesAsociadosApeliculas",
+            joinColumns = @JoinColumn(name = " personaje_id"),
+            inverseJoinColumns = @JoinColumn(name = "pelicula_id")
+    )
     private List<Pelicula_Serie> peliculas_series;
 
     public Personaje(Long id, String nombre, int edad, double peso, String historia) {

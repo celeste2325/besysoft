@@ -5,7 +5,6 @@ import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.repositories.database.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorGeneroOtituloException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
@@ -42,14 +41,11 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
     }
 
     @Override
-    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws BuscarPorGeneroOtituloException, GeneroInexistenteException {
+    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws GeneroInexistenteException {
         Genero generoEncontrado = this.generoRepository.findByNombre(genero);
+        //valido que la busqueda sea por genero ya q si es por titulo va a devolver null el generoEncontrado y estaria mal el error "El genero no existe".
         if (generoEncontrado == null && !genero.equalsIgnoreCase("")) {
             throw new GeneroInexistenteException("El genero no existe");
-        }
-        //no admite AND es or
-        if (!genero.equalsIgnoreCase("") && !titulo.equalsIgnoreCase("")) {
-            throw new BuscarPorGeneroOtituloException("Debe Buscar o por titulo o por Genero. No se admiten ambos");
         }
         return this.peliculaRepository.findByTituloOrGenero(titulo, generoEncontrado);
     }
@@ -76,12 +72,11 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
                     {
                         //encuentra aquellos personajes q no estan cargados a la pelicula
                         if (!peliculaEncontrada.getPersonajes().contains(personaje)) {
-
-                            //si no esta cargado el personaje a la pelicula lo agrega
                             peliculaEncontrada.getPersonajes().add(personaje);
                         }
                     }
             );
+            //para reutilizar la validacion de unique
             return this.altaPelicula(peliculaEncontrada);
         }
         throw new IdInexistente("La pelicula que intenta modificar no existe");
