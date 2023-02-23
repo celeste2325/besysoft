@@ -5,7 +5,6 @@ import com.besysoft.besysoftejercitacion1.repositories.memory.PersonajeRepositor
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -41,25 +40,22 @@ public class PersonajeServiceImpl implements PersonajeService {
     }
 
     @Override
-    public Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException, NombreYEdadSonCamposObligatoriosException {
-        //se asume campos nombre y edad son obligatorios
-        if (newPersonaje.getNombre() != null && newPersonaje.getEdad() != 0) {
-            if (this.personajeRepository.buscarPersonajePorNombreYedad(newPersonaje) != null) {
-                throw new ElPersonajeExisteException("Ya existe el personaje");
-            }
-            return this.personajeRepository.AltaPersonaje(newPersonaje);
+    public Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException {
+        if (this.personajeRepository.buscarPersonajePorNombre(newPersonaje) != null) {
+            throw new ElPersonajeExisteException("Ya existe el personaje");
         }
-        throw new NombreYEdadSonCamposObligatoriosException("Los campos: nombre y edad son obligatorios");
+        return this.personajeRepository.AltaPersonaje(newPersonaje);
+
     }
 
     @Override
     public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws PersonajeInexistenteException, ElPersonajeExisteException {
         Personaje personajeEncontradoById = this.personajeRepository.buscarPersonajePorId(id);
-        Personaje personajeEncontradoByNombreAndEdad = this.personajeRepository.buscarPersonajePorNombreYedad(newPersonaje);
+        Personaje personajeEncontradoByNombre = this.personajeRepository.buscarPersonajePorNombre(newPersonaje);
 
         if (personajeEncontradoById != null) {
-            if (personajeEncontradoByNombreAndEdad != null && !Objects.equals(personajeEncontradoByNombreAndEdad.getId(), id)) {
-                throw new ElPersonajeExisteException("Ya existe otro personaje con mismo nombre y edad");
+            if (personajeEncontradoByNombre != null && !Objects.equals(personajeEncontradoByNombre.getId(), id)) {
+                throw new ElPersonajeExisteException("Ya existe otro personaje con mismo nombre");
             }
             return this.personajeRepository.modificarPersonaje(personajeEncontradoById, newPersonaje);
         }

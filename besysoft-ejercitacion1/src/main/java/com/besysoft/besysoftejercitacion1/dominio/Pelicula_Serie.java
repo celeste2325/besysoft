@@ -1,7 +1,7 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +25,7 @@ import java.util.Objects;
 public class Pelicula_Serie implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
     @NotNull
     @NotEmpty
@@ -39,19 +39,11 @@ public class Pelicula_Serie implements Serializable {
     private double calificacion;
 
     @ManyToOne()
+    //de esta manera no devuelve el genero
     @JsonBackReference(value = "genero-pelicula")
     private Genero genero;
-
-    //TODO LEER LA UTILIDAD DEL @JsonBackReference(value = "personaje-pelicula")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "peliculas_series", fetch = FetchType.LAZY)
     @JsonBackReference(value = "personaje-pelicula")
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    //utilizo @JoinTable en las 2 entidades para hacer insert/update de forma bidireccional
-    @JoinTable(
-            name = "personajesAsociadosApeliculas",
-            joinColumns = @JoinColumn(name = " pelicula_id"),
-            inverseJoinColumns = @JoinColumn(name = "personaje_id")
-    )
     private List<Personaje> personajes;
 
     public Pelicula_Serie(Long id, String titulo, LocalDate fechaCreacion, double calificacion) {

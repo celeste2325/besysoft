@@ -3,7 +3,6 @@ package com.besysoft.besysoftejercitacion1.service.implementations;
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
 import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.CampoNombreEsObligatorioException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,16 +20,13 @@ public class GeneroServiceImpl implements GeneroService {
     }
 
     @Override
-    public Genero altaGenero(Genero newGenero) throws YaExisteGeneroConMismoNombreException, CampoNombreEsObligatorioException {
+    public Genero altaGenero(Genero newGenero) throws YaExisteGeneroConMismoNombreException {
         //campo nombre es obligatorio
-        if (newGenero.getNombre() != null) {
-            if (this.generoRepository.buscarGeneroPorNombre(newGenero.getNombre()) == null) {
-                return this.generoRepository.altaGenero(newGenero);
-            } else {
-                throw new YaExisteGeneroConMismoNombreException("Ya existe una genero con mismo nombre");
-            }
+        if (this.generoRepository.buscarGeneroPorNombre(newGenero.getNombre()) == null) {
+            return this.generoRepository.altaGenero(newGenero);
+        } else {
+            throw new YaExisteGeneroConMismoNombreException("Ya existe una genero con mismo nombre");
         }
-        throw new CampoNombreEsObligatorioException("El campo nombre es obligatorio");
     }
 
     @Override

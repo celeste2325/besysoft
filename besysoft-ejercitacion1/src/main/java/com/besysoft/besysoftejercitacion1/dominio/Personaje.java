@@ -1,7 +1,7 @@
 package com.besysoft.besysoftejercitacion1.dominio;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class Personaje implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
     @Column(nullable = false, unique = true)
     @NotNull
@@ -36,11 +36,11 @@ public class Personaje implements Serializable {
     @Column
     private String historia;
     @Column
+    //de esta manera no devuelve la lista
     @JsonBackReference(value = "personaje-pelicula")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //utilizo @JoinTable en las 2 entidades para hacer insert/update de forma bidireccional
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "personajesAsociadosApeliculas",
+            name = "personaje_pelicula",
             joinColumns = @JoinColumn(name = " personaje_id"),
             inverseJoinColumns = @JoinColumn(name = "pelicula_id")
     )

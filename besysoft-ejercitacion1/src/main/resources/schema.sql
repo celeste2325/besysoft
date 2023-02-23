@@ -22,7 +22,7 @@ create table personajes
     peso     double,
     primary key (id)
 );
-create table personajes_asociados_apeliculas
+create table personaje_pelicula
 (
     personaje_id bigint not null,
     pelicula_id  bigint not null
@@ -34,9 +34,6 @@ alter table peliculas
     add constraint UK_ropvo38gu64eson5q4dnf0mw2 unique (titulo);
 
 alter table personajes
-    add constraint UK_huqg771sp2m6si3fho616y4wk unique (edad);
-
-alter table personajes
     add constraint UK_lvf39kjqnknjok94lljt5ra6u unique (nombre);
 
 alter table peliculas
@@ -44,13 +41,13 @@ alter table peliculas
         foreign key (genero_id)
             references generos;
 
-alter table personajes_asociados_apeliculas
-    add constraint FK2poq3q4tul522ruhgjn8notne
-        foreign key (pelicula_id)
+alter table personaje_pelicula
+    add constraint FK8b6p5jht8a5ybr3am95adrdts
+        foreign key (personaje_id)
             references personajes;
 
-alter table personajes_asociados_apeliculas
-    add constraint FKpslhwek0kdjsix2cgsa2j7igc
-        foreign key (personaje_id)
+alter table personaje_pelicula
+    add constraint FKj3pkgqmvmhcw5p1907um83su6
+        foreign key (pelicula_id)
             references peliculas;
 

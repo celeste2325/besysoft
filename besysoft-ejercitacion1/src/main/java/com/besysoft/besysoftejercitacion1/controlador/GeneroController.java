@@ -2,7 +2,6 @@ package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.Genero;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.CampoNombreEsObligatorioException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class GeneroController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaGenero(@Valid @RequestBody Genero genero, BindingResult result) throws CampoNombreEsObligatorioException {
+    public ResponseEntity<?> AltaGenero(@Valid @RequestBody Genero genero, BindingResult result) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
@@ -39,7 +38,7 @@ public class GeneroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateGenero(@Valid @RequestBody Genero genero , BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> updateGenero(@Valid @RequestBody Genero genero, BindingResult result, @PathVariable Long id) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));

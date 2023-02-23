@@ -5,7 +5,7 @@ import com.besysoft.besysoftejercitacion1.dominio.Personaje;
 import java.util.List;
 
 public interface PersonajeRepository {
-    Personaje buscarPersonajePorNombreYedad(Personaje personaje);
+    Personaje buscarPersonajePorNombre(Personaje personaje);
 
     List<Personaje> obtenerTodos();
 

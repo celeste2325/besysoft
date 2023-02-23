@@ -2,7 +2,9 @@ package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +55,7 @@ public class PeliculaController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result) throws RangoDeCalificacionExcedidoException, ElCampoTituloEsObligatorioException {
+    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
@@ -61,10 +63,11 @@ public class PeliculaController {
         }
         try {
             return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), HttpStatus.CREATED);
-        } catch (PeliculaExistenteConMismoTituloException e) {
+        } catch (PeliculaExistenteConMismoTituloException | IdInexistente e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result, @PathVariable Long id) {
         Map<String, Object> validaciones = new HashMap<>();
@@ -74,7 +77,7 @@ public class PeliculaController {
         }
         try {
             return new ResponseEntity<>(this.service.updatePelicula(pelicula_serie, id), HttpStatus.OK);
-        } catch (PeliculaExistenteConMismoTituloException | IdInexistente | RangoDeCalificacionExcedidoException e) {
+        } catch (PeliculaExistenteConMismoTituloException | IdInexistente e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

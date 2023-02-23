@@ -25,9 +25,8 @@ public class PersonajeRepositoryImpl implements PersonajeRepository {
     }
 
     @Override
-    public Personaje buscarPersonajePorNombreYedad(Personaje personaje) {
-        return this.listaDePersonajes.stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())
-                && personaje1.getEdad() == personaje.getEdad()).findFirst().orElse(null);
+    public Personaje buscarPersonajePorNombre(Personaje personaje) {
+        return this.listaDePersonajes.stream().filter(personaje1 -> personaje1.getNombre().equalsIgnoreCase(personaje.getNombre())).findFirst().orElse(null);
     }
 
     @Override
