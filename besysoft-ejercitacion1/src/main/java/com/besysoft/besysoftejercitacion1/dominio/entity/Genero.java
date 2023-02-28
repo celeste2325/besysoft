@@ -1,10 +1,6 @@
-package com.besysoft.besysoftejercitacion1.dominio;
+package com.besysoft.besysoftejercitacion1.dominio.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -15,15 +11,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "generos")
 public class Genero implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
     @NotNull
     @NotEmpty
@@ -31,7 +25,6 @@ public class Genero implements Serializable {
     private String nombre;
 
     @OneToMany(mappedBy = "genero", fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "genero-pelicula")
     private List<Pelicula_Serie> peliculas_series;
 
     public Genero(Long id, String nombre) {
@@ -45,20 +38,5 @@ public class Genero implements Serializable {
         Collections.addAll(this.peliculas_series, pelicula_serie);
     }
 
-    @Override
-    public String toString() {
-        return "Genero{" +
-                "nombre='" + nombre + '\'' +
-                ", peliculas_series=" + peliculas_series +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Genero genero = (Genero) o;
-        return Objects.equals(nombre, genero.nombre);
-    }
 
 }

@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.repositories.memory;
 
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 
 import java.util.List;
 

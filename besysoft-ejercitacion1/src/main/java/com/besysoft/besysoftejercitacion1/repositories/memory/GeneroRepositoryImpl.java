@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.repositories.memory;
 
-import com.besysoft.besysoftejercitacion1.dominio.Genero;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

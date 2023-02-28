@@ -1,8 +1,8 @@
 package com.besysoft.besysoftejercitacion1.utilidades;
 
-import com.besysoft.besysoftejercitacion1.dominio.Genero;
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;

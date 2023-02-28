@@ -1,6 +1,10 @@
 package com.besysoft.besysoftejercitacion1.controlador;
 
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.dto.PersonajeDto;
+import com.besysoft.besysoftejercitacion1.dominio.dto.PersonajeDtoResponse;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.mapper.PersonajeMapper;
+import com.besysoft.besysoftejercitacion1.dominio.mapper.PersonajeResponseMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
@@ -26,14 +30,19 @@ public class PersonajeController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Personaje>> devolverTodosLosPersonajes() {
-        return new ResponseEntity<>(this.personajeService.obtenerTodos(), HttpStatus.OK);
+    public ResponseEntity<List<PersonajeDtoResponse>> devolverTodosLosPersonajes() {
+        List<Personaje> personajes = this.personajeService.obtenerTodos();
+
+        List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+        return new ResponseEntity<>(personajeDtoResponses, HttpStatus.OK);
     }
 
     @GetMapping("/request-param")
     public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) {
         try {
-            return new ResponseEntity<>(this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad), HttpStatus.OK);
+            List<Personaje> personajes = this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad);
+            List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+            return new ResponseEntity<>(personajeDtoResponses, HttpStatus.OK);
         } catch (BuscarPorEdadOPorNombreException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -42,32 +51,41 @@ public class PersonajeController {
 
     @GetMapping("/edad")
     public Object buscarPersonajesPorRangoDeEdad(@RequestParam(defaultValue = "0") int desde, @RequestParam(defaultValue = "0") int hasta) {
-        return this.personajeService.buscarPersonajesPorRangoDeEdad(desde, hasta);
+        List<Personaje> personajes = this.personajeService.buscarPersonajesPorRangoDeEdad(desde, hasta);
+        List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+        return personajeDtoResponses;
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody Personaje personaje, BindingResult result) {
+    public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody PersonajeDto personajeDto, BindingResult result) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            return new ResponseEntity<>(this.personajeService.altaPersonaje(personaje), HttpStatus.CREATED);
+            Personaje personajeEntity = PersonajeMapper.mapToEntity(personajeDto);
+            Personaje personajeSave = this.personajeService.altaPersonaje(personajeEntity);
+            PersonajeDtoResponse personajeResponse = PersonajeResponseMapper.mapToDtoResponse(personajeSave);
+            return new ResponseEntity<>(personajeResponse, HttpStatus.CREATED);
         } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePersonaje(@Valid @RequestBody Personaje personaje, BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> updatePersonaje(@Valid @RequestBody PersonajeDto personajeDto, BindingResult result, @PathVariable Long id) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            return new ResponseEntity<>(this.personajeService.updatePersonaje(personaje, id), HttpStatus.OK);
+            Personaje personajeEntity = PersonajeMapper.mapToEntity(personajeDto);
+            Personaje personajeSave = this.personajeService.updatePersonaje(personajeEntity, id);
+            PersonajeDtoResponse personajeResponse = PersonajeResponseMapper.mapToDtoResponse(personajeSave);
+
+            return new ResponseEntity<>(personajeResponse, HttpStatus.OK);
         } catch (PersonajeInexistenteException | ElPersonajeExisteException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

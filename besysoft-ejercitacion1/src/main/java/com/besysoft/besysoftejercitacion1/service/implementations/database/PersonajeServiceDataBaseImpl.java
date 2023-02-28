@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.service.implementations.database;
 
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;

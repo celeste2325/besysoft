@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.repositories.memory;
 
-import com.besysoft.besysoftejercitacion1.dominio.Genero;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 
 public interface GeneroRepository {
     Genero altaGenero(Genero newGenero);

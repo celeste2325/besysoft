@@ -1,6 +1,10 @@
 package com.besysoft.besysoftejercitacion1.controlador;
 
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.dominio.dto.Pelicula_serieDto;
+import com.besysoft.besysoftejercitacion1.dominio.dto.Pelicula_serieResponseDto;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.dominio.mapper.Pelicula_serieMapper;
+import com.besysoft.besysoftejercitacion1.dominio.mapper.Pelicula_serieResponseMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
@@ -27,9 +31,13 @@ public class PeliculaController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Pelicula_Serie>> obtenerTodos() {
-        return new ResponseEntity<>(this.service.obtenerTodos(), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_serieResponseDto>> obtenerTodos() {
+        List<Pelicula_Serie> pelicula_series = this.service.obtenerTodos();
+
+        List<Pelicula_serieResponseDto> pelicula_serieDtos = Pelicula_serieResponseMapper.mapLisToDto(pelicula_series);
+        return new ResponseEntity<>(pelicula_serieDtos, HttpStatus.OK);
     }
+
 
     @GetMapping("/request-param")
     public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) {
@@ -38,45 +46,62 @@ public class PeliculaController {
             return ResponseEntity.badRequest().body("Debe Buscar o por titulo o por Genero. No se admiten ambos");
         }
         try {
-            return new ResponseEntity<>(this.service.buscarPeliculasPorTituloOrGenero(titulo, genero), HttpStatus.OK);
+            List<Pelicula_Serie> pelicula_series = this.service.buscarPeliculasPorTituloOrGenero(titulo, genero);
+
+            List<Pelicula_serieResponseDto> pelicula_serieDtos = Pelicula_serieResponseMapper.mapLisToDto(pelicula_series);
+            return new ResponseEntity<>(pelicula_serieDtos, HttpStatus.OK);
         } catch (GeneroInexistenteException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/fechas")
-    public ResponseEntity<List<Pelicula_Serie>> buscarPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
-        return new ResponseEntity<>(this.service.buscarPeliculasPorRangoDeFecha(desde, hasta), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_serieResponseDto>> buscarPorRangoDeFecha(@RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate desde, @RequestParam(defaultValue = "") @DateTimeFormat(pattern = "ddMMyyyy") LocalDate hasta) {
+        List<Pelicula_Serie> pelicula_series = this.service.buscarPeliculasPorRangoDeFecha(desde, hasta);
+
+        List<Pelicula_serieResponseDto> pelicula_serieDtos = Pelicula_serieResponseMapper.mapLisToDto(pelicula_series);
+        return new ResponseEntity<>(pelicula_serieDtos, HttpStatus.OK);
     }
 
     @GetMapping("/calificacion")
-    public ResponseEntity<List<Pelicula_Serie>> buscarPorRangoDeCalificacion(@RequestParam(defaultValue = "") double desde, @RequestParam(defaultValue = "") double hasta) {
-        return new ResponseEntity<>(this.service.buscarPeliculasPorRangoDeCalificacion(desde, hasta), HttpStatus.OK);
+    public ResponseEntity<List<Pelicula_serieResponseDto>> buscarPorRangoDeCalificacion(@RequestParam(defaultValue = "") double desde, @RequestParam(defaultValue = "") double hasta) {
+        List<Pelicula_Serie> pelicula_series = this.service.buscarPeliculasPorRangoDeCalificacion(desde, hasta);
+
+        List<Pelicula_serieResponseDto> pelicula_serieDtos = Pelicula_serieResponseMapper.mapLisToDto(pelicula_series);
+        return new ResponseEntity<>(pelicula_serieDtos, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result) {
+    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto, BindingResult result) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            return new ResponseEntity<>(this.service.altaPelicula(pelicula_serie), HttpStatus.CREATED);
+            Pelicula_Serie pelicula_serie = Pelicula_serieMapper.mapToEntity(pelicula_serieDto);
+            Pelicula_Serie pelicula_serieSave = this.service.altaPelicula(pelicula_serie);
+            Pelicula_serieResponseDto pelicula_serieResponseDto = Pelicula_serieResponseMapper.mapToDtoResponse(pelicula_serieSave);
+
+            return new ResponseEntity<>(pelicula_serieResponseDto, HttpStatus.CREATED);
         } catch (PeliculaExistenteConMismoTituloException | IdInexistente e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_Serie pelicula_serie, BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto, BindingResult result, @PathVariable Long id) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            return new ResponseEntity<>(this.service.updatePelicula(pelicula_serie, id), HttpStatus.OK);
+            Pelicula_Serie pelicula_serie = Pelicula_serieMapper.mapToEntity(pelicula_serieDto);
+            Pelicula_Serie pelicula_serieSave = this.service.updatePelicula(pelicula_serie, id);
+            Pelicula_serieResponseDto pelicula_serieResponseDto = Pelicula_serieResponseMapper.mapToDtoResponse(pelicula_serieSave);
+
+            return new ResponseEntity<>(pelicula_serieResponseDto, HttpStatus.OK);
         } catch (PeliculaExistenteConMismoTituloException | IdInexistente e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

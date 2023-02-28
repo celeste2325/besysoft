@@ -1,7 +1,7 @@
 package com.besysoft.besysoftejercitacion1.repositories.database;
 
-import com.besysoft.besysoftejercitacion1.dominio.Genero;
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

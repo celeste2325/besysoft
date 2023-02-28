@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.service.interfaces;
 
-import com.besysoft.besysoftejercitacion1.dominio.Personaje;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;

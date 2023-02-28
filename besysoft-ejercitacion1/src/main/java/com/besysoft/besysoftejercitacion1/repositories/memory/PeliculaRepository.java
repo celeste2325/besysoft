@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.repositories.memory;
 
-import com.besysoft.besysoftejercitacion1.dominio.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
 
 import java.time.LocalDate;
 import java.util.List;

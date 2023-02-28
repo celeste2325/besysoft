@@ -1,6 +1,6 @@
 package com.besysoft.besysoftejercitacion1.service.implementations;
 
-import com.besysoft.besysoftejercitacion1.dominio.Genero;
+import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
