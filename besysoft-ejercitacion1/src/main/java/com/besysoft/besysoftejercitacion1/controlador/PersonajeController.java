@@ -3,13 +3,13 @@ package com.besysoft.besysoftejercitacion1.controlador;
 import com.besysoft.besysoftejercitacion1.dominio.dto.PersonajeDto;
 import com.besysoft.besysoftejercitacion1.dominio.dto.PersonajeDtoResponse;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
-import com.besysoft.besysoftejercitacion1.dominio.mapper.PersonajeMapper;
-import com.besysoft.besysoftejercitacion1.dominio.mapper.PersonajeResponseMapper;
+import com.besysoft.besysoftejercitacion1.dominio.mapstruct.PersonajeMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,18 +22,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/personajes")
+@AllArgsConstructor
 public class PersonajeController {
     private final PersonajeService personajeService;
-
-    public PersonajeController(PersonajeService personajeService) {
-        this.personajeService = personajeService;
-    }
+    private final PersonajeMapper personajeMapper;
 
     @GetMapping()
     public ResponseEntity<List<PersonajeDtoResponse>> devolverTodosLosPersonajes() {
         List<Personaje> personajes = this.personajeService.obtenerTodos();
 
-        List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+        List<PersonajeDtoResponse> personajeDtoResponses = personajeMapper.mapLisToDto(personajes);
         return new ResponseEntity<>(personajeDtoResponses, HttpStatus.OK);
     }
 
@@ -41,7 +39,7 @@ public class PersonajeController {
     public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) {
         try {
             List<Personaje> personajes = this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad);
-            List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+            List<PersonajeDtoResponse> personajeDtoResponses = personajeMapper.mapLisToDto(personajes);
             return new ResponseEntity<>(personajeDtoResponses, HttpStatus.OK);
         } catch (BuscarPorEdadOPorNombreException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -52,7 +50,7 @@ public class PersonajeController {
     @GetMapping("/edad")
     public Object buscarPersonajesPorRangoDeEdad(@RequestParam(defaultValue = "0") int desde, @RequestParam(defaultValue = "0") int hasta) {
         List<Personaje> personajes = this.personajeService.buscarPersonajesPorRangoDeEdad(desde, hasta);
-        List<PersonajeDtoResponse> personajeDtoResponses = PersonajeResponseMapper.mapLisToDto(personajes);
+        List<PersonajeDtoResponse> personajeDtoResponses = personajeMapper.mapLisToDto(personajes);
         return personajeDtoResponses;
     }
 
@@ -64,9 +62,9 @@ public class PersonajeController {
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            Personaje personajeEntity = PersonajeMapper.mapToEntity(personajeDto);
+            Personaje personajeEntity = personajeMapper.mapToEntity(personajeDto);
             Personaje personajeSave = this.personajeService.altaPersonaje(personajeEntity);
-            PersonajeDtoResponse personajeResponse = PersonajeResponseMapper.mapToDtoResponse(personajeSave);
+            PersonajeDtoResponse personajeResponse = personajeMapper.mapToDtoResponse(personajeSave);
             return new ResponseEntity<>(personajeResponse, HttpStatus.CREATED);
         } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -81,9 +79,9 @@ public class PersonajeController {
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            Personaje personajeEntity = PersonajeMapper.mapToEntity(personajeDto);
+            Personaje personajeEntity = personajeMapper.mapToEntity(personajeDto);
             Personaje personajeSave = this.personajeService.updatePersonaje(personajeEntity, id);
-            PersonajeDtoResponse personajeResponse = PersonajeResponseMapper.mapToDtoResponse(personajeSave);
+            PersonajeDtoResponse personajeResponse = personajeMapper.mapToDtoResponse(personajeSave);
 
             return new ResponseEntity<>(personajeResponse, HttpStatus.OK);
         } catch (PersonajeInexistenteException | ElPersonajeExisteException e) {

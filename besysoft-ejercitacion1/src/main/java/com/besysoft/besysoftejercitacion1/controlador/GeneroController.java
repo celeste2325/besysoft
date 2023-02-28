@@ -2,10 +2,12 @@ package com.besysoft.besysoftejercitacion1.controlador;
 
 import com.besysoft.besysoftejercitacion1.dominio.dto.GeneroDto;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
-import com.besysoft.besysoftejercitacion1.dominio.mapper.GeneroMapper;
+
+import com.besysoft.besysoftejercitacion1.dominio.mapstruct.GeneroMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,13 +19,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/generos")
+@AllArgsConstructor
 public class GeneroController {
 
     private final GeneroService generoService;
-
-    public GeneroController(GeneroService generoService) {
-        this.generoService = generoService;
-    }
+    private final GeneroMapper generoMapper;
 
     @PostMapping()
     public ResponseEntity<?> AltaGenero(@Valid @RequestBody GeneroDto generoDto, BindingResult result) {
@@ -33,8 +33,8 @@ public class GeneroController {
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            Genero genero = GeneroMapper.mapToEntity(generoDto);
-            GeneroDto generoResponse = GeneroMapper.mapToDto(this.generoService.altaGenero(genero));
+            Genero genero = generoMapper.mapToEntity(generoDto);
+            GeneroDto generoResponse = generoMapper.mapToDto(this.generoService.altaGenero(genero));
             return new ResponseEntity<>(generoResponse, HttpStatus.CREATED);
         } catch (YaExisteGeneroConMismoNombreException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -49,8 +49,8 @@ public class GeneroController {
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
-            Genero genero = GeneroMapper.mapToEntity(generoDto);
-            GeneroDto generoResponse = GeneroMapper.mapToDto(this.generoService.updateGenero(genero, id));
+            Genero genero = generoMapper.mapToEntity(generoDto);
+            GeneroDto generoResponse = generoMapper.mapToDto(this.generoService.updateGenero(genero, id));
 
             return new ResponseEntity<>(generoResponse, HttpStatus.OK);
         } catch (YaExisteGeneroConMismoNombreException | GeneroInexistenteException e) {
