@@ -6,6 +6,7 @@ import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "memory")
+@Slf4j
 public class PersonajeServiceImpl implements PersonajeService {
     private final PersonajeRepository personajeRepository;
 
@@ -31,11 +33,13 @@ public class PersonajeServiceImpl implements PersonajeService {
         if (!nombre.equalsIgnoreCase("") && edad != 0) {
             throw new BuscarPorEdadOPorNombreException("buscar por nombre o por edad");
         }
+        log.info("Busqueda por nombre o edad" + "Nombre: "+ nombre + "Edad: "+ edad);
         return this.personajeRepository.buscarPersonajesPorNombreOrEdad(nombre, edad);
     }
 
     @Override
     public List<Personaje> buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
+        log.info("Busqueda por rango de edad" + "Desde: "+ desde + "Hasta: "+ hasta);
         return this.personajeRepository.buscarPersonajesPorRangoDeEdad(desde, hasta);
     }
 

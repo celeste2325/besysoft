@@ -7,9 +7,9 @@ import com.besysoft.besysoftejercitacion1.dominio.mapstruct.PersonajeMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.NombreYEdadSonCamposObligatoriosException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/personajes")
 @AllArgsConstructor
+@Slf4j
 public class PersonajeController {
     private final PersonajeService personajeService;
     private final PersonajeMapper personajeMapper;
@@ -42,6 +43,7 @@ public class PersonajeController {
             List<PersonajeDtoResponse> personajeDtoResponses = personajeMapper.mapLisToDto(personajes);
             return new ResponseEntity<>(personajeDtoResponses, HttpStatus.OK);
         } catch (BuscarPorEdadOPorNombreException e) {
+            log.error("ocurrio un error porque la busqueda es realizada por nombre Y edad. La misma debe realizarse por nombre O por edad", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
@@ -58,7 +60,11 @@ public class PersonajeController {
     public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody PersonajeDto personajeDto, BindingResult result) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
-            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            log.info("Ocurrio una validacion ");
+            result.getFieldErrors().forEach(fieldError -> {
+                log.info("Campo: " + fieldError.getField() + " validacion: " + fieldError.getDefaultMessage());
+                validaciones.put(fieldError.getField(), fieldError.getDefaultMessage());
+            });
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
@@ -66,7 +72,8 @@ public class PersonajeController {
             Personaje personajeSave = this.personajeService.altaPersonaje(personajeEntity);
             PersonajeDtoResponse personajeResponse = personajeMapper.mapToDtoResponse(personajeSave);
             return new ResponseEntity<>(personajeResponse, HttpStatus.CREATED);
-        } catch (ElPersonajeExisteException | NombreYEdadSonCamposObligatoriosException e) {
+        } catch (ElPersonajeExisteException e) {
+            log.error("ocurrio un error porque el personaje a crear ya existe", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -75,7 +82,11 @@ public class PersonajeController {
     public ResponseEntity<?> updatePersonaje(@Valid @RequestBody PersonajeDto personajeDto, BindingResult result, @PathVariable Long id) {
         Map<String, Object> validaciones = new HashMap<>();
         if (result.hasErrors()) {
-            result.getFieldErrors().forEach(fieldError -> validaciones.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            log.info("Ocurrio una validacion ");
+            result.getFieldErrors().forEach(fieldError -> {
+                log.info("Campo: " + fieldError.getField() + " validacion: " + fieldError.getDefaultMessage());
+                validaciones.put(fieldError.getField(), fieldError.getDefaultMessage());
+            });
             return ResponseEntity.badRequest().body(validaciones);
         }
         try {
@@ -84,7 +95,11 @@ public class PersonajeController {
             PersonajeDtoResponse personajeResponse = personajeMapper.mapToDtoResponse(personajeSave);
 
             return new ResponseEntity<>(personajeResponse, HttpStatus.OK);
-        } catch (PersonajeInexistenteException | ElPersonajeExisteException e) {
+        } catch (PersonajeInexistenteException e) {
+            log.error("ocurrio un error porque el personaje que se quiere modificar no existe", e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ElPersonajeExisteException e) {
+            log.error("ocurrio un error porque el nombre que se quiere asignar al personaje ya existe", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

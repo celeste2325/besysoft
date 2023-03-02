@@ -9,6 +9,7 @@ import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import static java.lang.String.format;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "database")
+@Slf4j
 public class PeliculaServiceDataBaseImpl implements PeliculaService {
     private final PeliculaRepository peliculaRepository;
     private final GeneroRepository generoRepository;
@@ -43,12 +45,14 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
     @Override
     @Transactional(readOnly = true)
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
+        log.info("Busqueda por rango de fecha" + "Desde: "+ desde + "Hasta: "+ hasta);
         return this.peliculaRepository.findByFechaCreacionBetween(desde, hasta);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
+        log.info("Busqueda por rango de calificacion" + "Desde: "+ desde + "Hasta: "+ hasta);
         return this.peliculaRepository.findByCalificacionBetween(desde, hasta);
     }
 

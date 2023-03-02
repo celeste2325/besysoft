@@ -8,6 +8,7 @@ import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import static java.lang.String.format;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "memory")
+@Slf4j
 public class PeliculaServiceImpl implements PeliculaService {
     private final PeliculaRepository peliculaRepository;
     private final GeneroRepository generoRepository;
@@ -36,11 +38,13 @@ public class PeliculaServiceImpl implements PeliculaService {
 
     @Override
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
+        log.info("Busqueda por rango de fecha" + "Desde: "+ desde + "Hasta: "+ hasta);
         return this.peliculaRepository.buscarPeliculasPorRangoDeFecha(desde, hasta);
     }
 
     @Override
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
+        log.info("Busqueda por rango de calificacion" + "Desde: "+ desde + "Hasta: "+ hasta);
         return this.peliculaRepository.buscarPeliculasPorRangoDeCalificacion(desde, hasta);
     }
 
@@ -48,7 +52,6 @@ public class PeliculaServiceImpl implements PeliculaService {
     public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String nombreGenero) throws GeneroInexistenteException {
         if (!titulo.equalsIgnoreCase("") && nombreGenero.equalsIgnoreCase("")) {
             return this.peliculaRepository.buscarPeliculaPorTitulo(titulo);
-
         }
         Genero generoEncontrado = this.generoRepository.buscarGeneroPorNombre(nombreGenero);
         if (generoEncontrado != null) {
