@@ -74,22 +74,6 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
             throw new IdInexistente("El genero que intenta asignar a la pelicula no existe");
         }
         return this.peliculaRepository.save(peliculaNew);
-
-        /*try {
-            return this.peliculaRepository.save(peliculaNew);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-
-            if (e.getCause() instanceof ConstraintViolationException) {
-                //verificacion de unicidad
-                if (e.getCause().getCause().getMessage().contains("Violación de indice de Unicidad ó Clave primaria")) {
-                    throw new PeliculaExistenteConMismoTituloException("Ya existe una pelicula con mismo titulo");
-                    //caso en que el id del genero de la pelicula a crear no exista
-                } else if (e.getCause().getCause().getMessage().contains("Violación de una restricción de Integridad Referencial")) {
-                    throw new IdInexistente(format("El id %d, correspondiente al genero no existe.", peliculaNew.getGenero().getId()));
-                }
-            }
-            throw e;
-        }*/
     }
 
     @Override
