@@ -10,15 +10,12 @@ import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistent
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static java.lang.String.format;
 
 
 @Service
@@ -45,14 +42,14 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
     @Override
     @Transactional(readOnly = true)
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
-        log.info("Busqueda por rango de fecha" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de fecha" + "Desde: " + desde + "Hasta: " + hasta);
         return this.peliculaRepository.findByFechaCreacionBetween(desde, hasta);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
-        log.info("Busqueda por rango de calificacion" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de calificacion" + "Desde: " + desde + "Hasta: " + hasta);
         return this.peliculaRepository.findByCalificacionBetween(desde, hasta);
     }
 
@@ -70,7 +67,15 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
     @Override
     @Transactional(readOnly = false)
     public Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteConMismoTituloException, IdInexistente {
-        try {
+        if (this.peliculaRepository.findByTitulo(peliculaNew.getTitulo()) != null) {
+            throw new PeliculaExistenteConMismoTituloException("La pelicula ya existe");
+        }
+        if (!this.generoRepository.findById(peliculaNew.getGenero().getId()).isPresent()) {
+            throw new IdInexistente("El genero que intenta asignar a la pelicula no existe");
+        }
+        return this.peliculaRepository.save(peliculaNew);
+
+        /*try {
             return this.peliculaRepository.save(peliculaNew);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
 
@@ -84,7 +89,7 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
                 }
             }
             throw e;
-        }
+        }*/
     }
 
     @Override

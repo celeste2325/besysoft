@@ -13,4 +13,6 @@ public interface PeliculaRepository extends JpaRepository<Pelicula_Serie, Long> 
     List<Pelicula_Serie> findByFechaCreacionBetween(LocalDate desde, LocalDate hasta);
 
     List<Pelicula_Serie> findByCalificacionBetween(double desde, double hasta);
+
+    Pelicula_Serie findByTitulo(String titulo);
 }

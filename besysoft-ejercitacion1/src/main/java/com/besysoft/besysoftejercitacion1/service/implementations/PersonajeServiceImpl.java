@@ -33,13 +33,13 @@ public class PersonajeServiceImpl implements PersonajeService {
         if (!nombre.equalsIgnoreCase("") && edad != 0) {
             throw new BuscarPorEdadOPorNombreException("buscar por nombre o por edad");
         }
-        log.info("Busqueda por nombre o edad" + "Nombre: "+ nombre + "Edad: "+ edad);
+        log.info("Busqueda por nombre o edad" + "Nombre: " + nombre + "Edad: " + edad);
         return this.personajeRepository.buscarPersonajesPorNombreOrEdad(nombre, edad);
     }
 
     @Override
     public List<Personaje> buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
-        log.info("Busqueda por rango de edad" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de edad" + "Desde: " + desde + "Hasta: " + hasta);
         return this.personajeRepository.buscarPersonajesPorRangoDeEdad(desde, hasta);
     }
 

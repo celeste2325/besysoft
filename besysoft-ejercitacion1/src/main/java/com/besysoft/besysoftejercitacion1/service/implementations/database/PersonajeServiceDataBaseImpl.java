@@ -32,14 +32,14 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
     @Override
     @Transactional(readOnly = true)
     public List<Personaje> buscarPersonajesPorNombreOrEdad(String nombre, int edad) {
-        log.info("Busqueda por nombre o edad" + "Nombre: "+ nombre + "Edad: "+ edad);
+        log.info("Busqueda por nombre o edad" + "Nombre: " + nombre + "Edad: " + edad);
         return this.personajeRepository.findByNombreOrEdad(nombre, edad);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Personaje> buscarPersonajesPorRangoDeEdad(int desde, int hasta) {
-        log.info("Busqueda por rango de edad" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de edad" + "Desde: " + desde + "Hasta: " + hasta);
         return this.personajeRepository.findByEdadBetween(desde, hasta);
     }
 

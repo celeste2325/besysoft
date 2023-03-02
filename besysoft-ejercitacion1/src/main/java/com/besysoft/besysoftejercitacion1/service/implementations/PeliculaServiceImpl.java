@@ -38,13 +38,13 @@ public class PeliculaServiceImpl implements PeliculaService {
 
     @Override
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeFecha(LocalDate desde, LocalDate hasta) {
-        log.info("Busqueda por rango de fecha" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de fecha" + "Desde: " + desde + "Hasta: " + hasta);
         return this.peliculaRepository.buscarPeliculasPorRangoDeFecha(desde, hasta);
     }
 
     @Override
     public List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta) {
-        log.info("Busqueda por rango de calificacion" + "Desde: "+ desde + "Hasta: "+ hasta);
+        log.info("Busqueda por rango de calificacion" + "Desde: " + desde + "Hasta: " + hasta);
         return this.peliculaRepository.buscarPeliculasPorRangoDeCalificacion(desde, hasta);
     }
 
