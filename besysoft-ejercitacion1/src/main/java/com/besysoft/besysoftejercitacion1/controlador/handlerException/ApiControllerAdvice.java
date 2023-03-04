@@ -1,7 +1,7 @@
 package com.besysoft.besysoftejercitacion1.controlador.handlerException;
 
 import com.besysoft.besysoftejercitacion1.dominio.dto.response.ExceptionDto;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.*;
+import com.besysoft.besysoftejercitacion1.excepciones.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;

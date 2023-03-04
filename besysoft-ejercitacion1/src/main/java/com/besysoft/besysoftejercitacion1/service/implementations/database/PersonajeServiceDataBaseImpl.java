@@ -1,10 +1,10 @@
 package com.besysoft.besysoftejercitacion1.service.implementations.database;
 
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.PersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeExisteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;

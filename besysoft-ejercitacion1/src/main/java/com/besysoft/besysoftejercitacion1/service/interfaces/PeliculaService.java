@@ -1,8 +1,8 @@
 package com.besysoft.besysoftejercitacion1.service.interfaces;
 
 import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.PeliculaExistenteException;
 
 import java.time.LocalDate;
 import java.util.List;

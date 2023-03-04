@@ -2,11 +2,11 @@ package com.besysoft.besysoftejercitacion1.service.implementations;
 
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.PeliculaExistenteException;
 import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.repositories.memory.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;

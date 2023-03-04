@@ -1,10 +1,10 @@
 package com.besysoft.besysoftejercitacion1.service.implementations.database;
 
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
+import com.besysoft.besysoftejercitacion1.excepciones.GeneroExistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
 import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroExistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

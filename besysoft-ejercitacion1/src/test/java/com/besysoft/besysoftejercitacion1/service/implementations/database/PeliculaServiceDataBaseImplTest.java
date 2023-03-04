@@ -2,12 +2,12 @@ package com.besysoft.besysoftejercitacion1.service.implementations.database;
 
 import com.besysoft.besysoftejercitacion1.datos.DatosDummy;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.PeliculaExistenteException;
 import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.repositories.database.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

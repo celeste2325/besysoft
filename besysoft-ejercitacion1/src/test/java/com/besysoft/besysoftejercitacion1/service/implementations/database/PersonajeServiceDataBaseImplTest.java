@@ -2,11 +2,11 @@ package com.besysoft.besysoftejercitacion1.service.implementations.database;
 
 import com.besysoft.besysoftejercitacion1.datos.DatosDummy;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
+import com.besysoft.besysoftejercitacion1.excepciones.ErrorDeBusquedaException;
+import com.besysoft.besysoftejercitacion1.excepciones.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.excepciones.PersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ErrorDeBusquedaException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeExisteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
