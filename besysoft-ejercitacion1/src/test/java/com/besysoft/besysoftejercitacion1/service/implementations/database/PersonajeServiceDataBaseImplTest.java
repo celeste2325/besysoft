@@ -4,9 +4,9 @@ import com.besysoft.besysoftejercitacion1.datos.DatosDummy;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ErrorDeBusquedaException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeExisteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -52,7 +52,7 @@ class PersonajeServiceDataBaseImplTest {
     }
 
     @Test
-    void buscarPersonajesPorNombreOrEdad() throws BuscarPorEdadOPorNombreException {
+    void buscarPersonajesPorNombreOrEdad() throws ErrorDeBusquedaException {
         when(this.personajeRepository.findByNombreOrEdad(any(), anyInt())).thenReturn(DatosDummy.getPersonajesPorFiltro());
         //WHEN
         List<Personaje> personajes = personajeService.buscarPersonajesPorNombreOrEdad("", 49);
@@ -74,7 +74,7 @@ class PersonajeServiceDataBaseImplTest {
     }
 
     @Test
-    void altaPersonaje() throws ElPersonajeExisteException {
+    void altaPersonaje() throws PersonajeExisteException {
         //GIVEN
         when(personajeRepository.findByNombre(any())).thenReturn(Optional.of(DatosDummy.getPersonaje1()));
         //WHEN
@@ -98,7 +98,7 @@ class PersonajeServiceDataBaseImplTest {
     }
 
     @Test
-    void updatePersonaje() throws ElPersonajeExisteException, IdInexistente {
+    void updatePersonaje() throws PersonajeExisteException, IdInexistenteException {
         //GIVEN
         when(personajeRepository.findById(any())).thenReturn(Optional.of(DatosDummy.getPersonaje1()));
         personajeService.updatePersonaje(DatosDummy.getPersonaje1Update(), DatosDummy.getPersonaje1Update().getId());

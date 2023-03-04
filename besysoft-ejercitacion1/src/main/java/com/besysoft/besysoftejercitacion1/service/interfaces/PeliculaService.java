@@ -1,9 +1,8 @@
 package com.besysoft.besysoftejercitacion1.service.interfaces;
 
 import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,9 +14,9 @@ public interface PeliculaService {
 
     List<Pelicula_Serie> buscarPeliculasPorRangoDeCalificacion(double desde, double hasta);
 
-    List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws GeneroInexistenteException;
+    List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws IdInexistenteException;
 
-    Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteConMismoTituloException, IdInexistente;
+    Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteException, IdInexistenteException;
 
-    Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteConMismoTituloException, IdInexistente;
+    Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteException, IdInexistenteException;
 }

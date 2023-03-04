@@ -5,9 +5,8 @@ import com.besysoft.besysoftejercitacion1.dominio.dto.Pelicula_serieResponseDto;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.dominio.mapstruct.Pelicula_serieMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,7 +33,7 @@ public class PeliculaController {
     }
 
     @GetMapping("/request-param")
-    public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) throws GeneroInexistenteException {
+    public ResponseEntity<?> buscarPorTituloOrGenero(@RequestParam(defaultValue = "") String titulo, @RequestParam(defaultValue = "") String genero) throws IdInexistenteException {
         //no admite AND es or
         if (!genero.equalsIgnoreCase("") && !titulo.equalsIgnoreCase("")) {
             log.error("ocurrio un error porque la búsqueda fue realizada por titulo de pelicula Y genero. La misma debe ser por titulo O por genero");
@@ -57,14 +56,14 @@ public class PeliculaController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto) throws PeliculaExistenteConMismoTituloException, IdInexistente {
+    public ResponseEntity<?> AltaPelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto) throws PeliculaExistenteException, IdInexistenteException {
         Pelicula_Serie pelicula_serie = pelicula_serieMapper.mapToEntity(pelicula_serieDto);
         Pelicula_Serie pelicula_serieSave = this.service.altaPelicula(pelicula_serie);
         return new ResponseEntity<>(pelicula_serieMapper.mapToDto(pelicula_serieSave), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto, @PathVariable Long id) throws IdInexistente, PeliculaExistenteConMismoTituloException {
+    public ResponseEntity<?> updatePelicula(@Valid @RequestBody Pelicula_serieDto pelicula_serieDto, @PathVariable Long id) throws IdInexistenteException, PeliculaExistenteException {
         Pelicula_Serie pelicula_serie = pelicula_serieMapper.mapToEntity(pelicula_serieDto);
         Pelicula_Serie pelicula_serieSave = this.service.updatePelicula(pelicula_serie, id);
         return new ResponseEntity<>(pelicula_serieMapper.mapToDto(pelicula_serieSave), HttpStatus.OK);

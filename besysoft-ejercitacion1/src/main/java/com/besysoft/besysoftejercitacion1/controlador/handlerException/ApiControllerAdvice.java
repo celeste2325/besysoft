@@ -28,7 +28,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto generoExistente(YaExisteGeneroConMismoNombreException ex) {
+    public ExceptionDto generoExistente(GeneroExistenteException ex) {
         log.error("ocurrio un error porque ya el genero existe", ex);
         return new ExceptionDto(
                 HttpStatus.BAD_REQUEST.value(),
@@ -40,7 +40,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto idInexistente(IdInexistente ex) {
+    public ExceptionDto idInexistente(IdInexistenteException ex) {
         log.error("ocurrio un error porque id del genero no existe", ex);
         return new ExceptionDto(
                 HttpStatus.BAD_REQUEST.value(),
@@ -52,7 +52,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto PeliculaExistente(PeliculaExistenteConMismoTituloException ex) {
+    public ExceptionDto PeliculaExistente(PeliculaExistenteException ex) {
         log.error("ocurrio un error porque ya existe una pelicula con el mismo titulo", ex);
         return new ExceptionDto(
                 HttpStatus.BAD_REQUEST.value(),
@@ -64,7 +64,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto buscarPersonajesPorNombreOrEdadError(BuscarPorEdadOPorNombreException ex) {
+    public ExceptionDto buscarPersonajesPorNombreOrEdadError(ErrorDeBusquedaException ex) {
         log.error("ocurrio un error porque la busqueda es realizada por nombre Y edad. La misma debe realizarse por nombre O por edad", ex);
         return new ExceptionDto(
                 HttpStatus.BAD_REQUEST.value(),
@@ -76,7 +76,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto PersonajeExistente(ElPersonajeExisteException ex) {
+    public ExceptionDto PersonajeExistente(PersonajeExisteException ex) {
         log.error("ocurrio un error porque el personaje a crear ya existe", ex);
         return new ExceptionDto(
                 HttpStatus.BAD_REQUEST.value(),

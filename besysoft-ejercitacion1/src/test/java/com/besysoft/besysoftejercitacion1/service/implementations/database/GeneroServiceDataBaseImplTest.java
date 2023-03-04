@@ -4,8 +4,8 @@ import com.besysoft.besysoftejercitacion1.datos.DatosDummy;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroExistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +36,7 @@ class GeneroServiceDataBaseImplTest {
     }
 
     @Test
-    void altaGenero() throws YaExisteGeneroConMismoNombreException {
+    void altaGenero() throws GeneroExistenteException {
         //GIVEN
         //WHEN
         service.altaGenero(datos.getDramaMock());
@@ -62,7 +62,7 @@ class GeneroServiceDataBaseImplTest {
     }
 
     @Test
-    void updateGenero() throws YaExisteGeneroConMismoNombreException, GeneroInexistenteException {
+    void updateGenero() throws GeneroExistenteException, IdInexistenteException {
         //GIVEN
         when(repository.findById(any())).thenReturn(Optional.of(datos.getAventura2Mock()));
         Genero generoNew = new Genero(6L, "aventura2Modificado");

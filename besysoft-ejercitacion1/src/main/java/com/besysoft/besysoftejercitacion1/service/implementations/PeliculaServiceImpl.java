@@ -5,9 +5,8 @@ import com.besysoft.besysoftejercitacion1.dominio.entity.Pelicula_Serie;
 import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.repositories.memory.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class PeliculaServiceImpl implements PeliculaService {
     }
 
     @Override
-    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String nombreGenero) throws GeneroInexistenteException {
+    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String nombreGenero) throws IdInexistenteException {
         if (!titulo.equalsIgnoreCase("") && nombreGenero.equalsIgnoreCase("")) {
             return this.peliculaRepository.buscarPeliculaPorTitulo(titulo);
         }
@@ -57,23 +56,23 @@ public class PeliculaServiceImpl implements PeliculaService {
         if (generoEncontrado != null) {
             return generoEncontrado.getPeliculas_series();
         } else {
-            throw new GeneroInexistenteException("No existe el genero : " + nombreGenero);
+            throw new IdInexistenteException("No existe el genero : " + nombreGenero);
         }
     }
 
     @Override
-    public Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteConMismoTituloException {
+    public Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteException {
 
         //la pelicula existe
         if (this.peliculaRepository.buscarPeliculaPorTitulo(peliculaNew.getTitulo()) != null) {
-            throw new PeliculaExistenteConMismoTituloException("Ya existe una pelicula con mismo titulo");
+            throw new PeliculaExistenteException("Ya existe una pelicula con mismo titulo");
         }
         return this.peliculaRepository.altaPelicula(peliculaNew);
 
     }
 
     @Override
-    public Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteConMismoTituloException, IdInexistente {
+    public Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteException, IdInexistenteException {
         Pelicula_Serie peliculaEncontradaPorId = this.peliculaRepository.buscarPeliculaPorId(id);
         Pelicula_Serie peliculaEncontradaPorTitulo = this.peliculaRepository.buscarPeliculaPorTitulo(peliculaNew.getTitulo()).stream().findAny().orElse(null);
 
@@ -81,10 +80,10 @@ public class PeliculaServiceImpl implements PeliculaService {
         if (peliculaEncontradaPorId != null) {
             //valida que al modificar la pelicula no se cambie el titulo por uno ya existente
             if (peliculaEncontradaPorTitulo != null && !Objects.equals(peliculaEncontradaPorTitulo.getId(), id)) {
-                throw new PeliculaExistenteConMismoTituloException((format("Ya existe una pelicula con mismo titulo: %s", peliculaNew.getTitulo())));
+                throw new PeliculaExistenteException((format("Ya existe una pelicula con mismo titulo: %s", peliculaNew.getTitulo())));
             }
             return this.peliculaRepository.updatePelicula(peliculaEncontradaPorId, peliculaNew);
         }
-        throw new IdInexistente((format("El ID %d ingresado no existe", id)));
+        throw new IdInexistenteException((format("El ID %d ingresado no existe", id)));
     }
 }

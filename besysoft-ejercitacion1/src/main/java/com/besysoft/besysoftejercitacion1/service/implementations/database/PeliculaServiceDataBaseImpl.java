@@ -6,9 +6,8 @@ import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository
 import com.besysoft.besysoftejercitacion1.repositories.database.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -56,25 +55,25 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws GeneroInexistenteException {
+    public List<Pelicula_Serie> buscarPeliculasPorTituloOrGenero(String titulo, String genero) throws IdInexistenteException {
         Genero generoEncontrado = this.generoRepository.findByNombre(genero);
         //valido que la busqueda sea por genero ya q si es por titulo va a devolver null el generoEncontrado y estaria mal el error "El genero no existe".
         if (generoEncontrado == null && !genero.equalsIgnoreCase("")) {
-            throw new GeneroInexistenteException("El genero no existe");
+            throw new IdInexistenteException("El genero no existe");
         }
         return this.peliculaRepository.findByTituloOrGenero(titulo, generoEncontrado);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteConMismoTituloException, IdInexistente {
+    public Pelicula_Serie altaPelicula(Pelicula_Serie peliculaNew) throws PeliculaExistenteException, IdInexistenteException {
         this.validacionPelicula(peliculaNew, peliculaNew.getId());
         return this.peliculaRepository.save(peliculaNew);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteConMismoTituloException, IdInexistente {
+    public Pelicula_Serie updatePelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteException, IdInexistenteException {
         Pelicula_Serie peliculaEncontrada = this.peliculaRepository.findById(id).orElse(null);
         if (peliculaEncontrada != null) {
             this.validacionPelicula(peliculaNew, id);
@@ -85,18 +84,18 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
             //para reutilizar la validacion de unique
             return this.peliculaRepository.save(peliculaEncontrada);
         }
-        throw new IdInexistente("La pelicula que intenta modificar no existe");
+        throw new IdInexistenteException("La pelicula que intenta modificar no existe");
     }
 
-    public void validacionPelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteConMismoTituloException, IdInexistente {
+    public void validacionPelicula(Pelicula_Serie peliculaNew, Long id) throws PeliculaExistenteException, IdInexistenteException {
         Pelicula_Serie pelicula_serie = this.peliculaRepository.findByTitulo(peliculaNew.getTitulo());
 
         if (pelicula_serie != null) {
             if (!Objects.equals(pelicula_serie.getId(), id))
-                throw new PeliculaExistenteConMismoTituloException("La pelicula ya existe");
+                throw new PeliculaExistenteException("La pelicula ya existe");
         }
         if (this.generoRepository.findById(peliculaNew.getGenero().getId()).isEmpty()) {
-            throw new IdInexistente("El genero que intenta asignar a la pelicula no existe");
+            throw new IdInexistenteException("El genero que intenta asignar a la pelicula no existe");
         }
     }
 }

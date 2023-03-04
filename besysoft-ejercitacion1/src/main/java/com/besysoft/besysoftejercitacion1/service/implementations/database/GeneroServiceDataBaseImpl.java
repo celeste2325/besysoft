@@ -3,8 +3,8 @@ package com.besysoft.besysoftejercitacion1.service.implementations.database;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroExistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +22,14 @@ public class GeneroServiceDataBaseImpl implements GeneroService {
 
     @Override
     @Transactional(readOnly = false)
-    public Genero altaGenero(Genero newGenero) throws YaExisteGeneroConMismoNombreException {
+    public Genero altaGenero(Genero newGenero) throws GeneroExistenteException {
         this.validacionIdGenero(newGenero, newGenero.getId());
         return this.generoRepository.save(newGenero);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Genero updateGenero(Genero newGenero, Long id) throws IdInexistente, YaExisteGeneroConMismoNombreException {
+    public Genero updateGenero(Genero newGenero, Long id) throws IdInexistenteException, GeneroExistenteException {
         Genero generoEncontradoById = this.generoRepository.findById(id).orElse(null);
 
         if (generoEncontradoById != null) {
@@ -37,15 +37,15 @@ public class GeneroServiceDataBaseImpl implements GeneroService {
             generoEncontradoById.setNombre(newGenero.getNombre());
             return this.generoRepository.save(generoEncontradoById);
         }
-        throw new IdInexistente("El id del genero que intenta modificar no existe");
+        throw new IdInexistenteException("El id del genero que intenta modificar no existe");
     }
 
     //paso el id para poder usar el metodo tanto en el save como en el update
-    public void validacionIdGenero(Genero newGenero, Long id) throws YaExisteGeneroConMismoNombreException {
+    public void validacionIdGenero(Genero newGenero, Long id) throws GeneroExistenteException {
         Genero genero = this.generoRepository.findByNombre(newGenero.getNombre());
         if (genero != null) {
             if (!Objects.equals(genero.getId(), id))
-                throw new YaExisteGeneroConMismoNombreException("Ya existe un genero con mismo nombre");
+                throw new GeneroExistenteException("Ya existe un genero con mismo nombre");
         }
     }
 

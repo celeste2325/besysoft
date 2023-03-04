@@ -3,8 +3,8 @@ package com.besysoft.besysoftejercitacion1.service.implementations.database;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeExisteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -46,14 +46,14 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
 
     @Override
     @Transactional(readOnly = false)
-    public Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException {
+    public Personaje altaPersonaje(Personaje newPersonaje) throws PersonajeExisteException {
         this.validacionPersonaje(newPersonaje, newPersonaje.getId());
         return this.personajeRepository.save(newPersonaje);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws IdInexistente, ElPersonajeExisteException {
+    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws IdInexistenteException, PersonajeExisteException {
         Personaje personajeEncontrado = this.personajeRepository.findById(id).orElse(null);
         if (personajeEncontrado != null) {
             this.validacionPersonaje(newPersonaje, id);
@@ -73,14 +73,14 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
 
             return this.personajeRepository.save(personajeEncontrado);
         }
-        throw new IdInexistente("El id ingresado no existe");
+        throw new IdInexistenteException("El id ingresado no existe");
     }
 
-    public void validacionPersonaje(Personaje newPersonaje, Long id) throws ElPersonajeExisteException {
+    public void validacionPersonaje(Personaje newPersonaje, Long id) throws PersonajeExisteException {
         Optional<Personaje> personaje = this.personajeRepository.findByNombre(newPersonaje.getNombre());
         if (personaje.isPresent()) {
             if (!Objects.equals(personaje.get().getId(), id))
-                throw new ElPersonajeExisteException("Ya existe un personaje con mismo nombre");
+                throw new PersonajeExisteException("Ya existe un personaje con mismo nombre");
         }
     }
 }

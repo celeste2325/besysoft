@@ -5,9 +5,9 @@ import com.besysoft.besysoftejercitacion1.dominio.dto.PersonajeDtoResponse;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.dominio.mapstruct.PersonajeMapper;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ErrorDeBusquedaException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeExisteException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class PersonajeController {
     }
 
     @GetMapping("/request-param")
-    public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) throws BuscarPorEdadOPorNombreException {
+    public ResponseEntity<?> buscarPersonajesPorNombreOrEdad(@RequestParam(defaultValue = "") String nombre, @RequestParam(defaultValue = "0") int edad) throws ErrorDeBusquedaException {
         List<Personaje> personajes = this.personajeService.buscarPersonajesPorNombreOrEdad(nombre, edad);
         return new ResponseEntity<>(personajeMapper.mapLisToDto(personajes), HttpStatus.OK);
     }
@@ -42,14 +42,14 @@ public class PersonajeController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody PersonajeDto personajeDto) throws ElPersonajeExisteException {
+    public ResponseEntity<?> AltaPersonaje(@Valid @RequestBody PersonajeDto personajeDto) throws PersonajeExisteException {
         Personaje personajeEntity = personajeMapper.mapToEntity(personajeDto);
         Personaje personajeSave = this.personajeService.altaPersonaje(personajeEntity);
         return new ResponseEntity<>(personajeMapper.mapToDtoResponse(personajeSave), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePersonaje(@Valid @RequestBody PersonajeDto personajeDto, @PathVariable Long id) throws IdInexistente, ElPersonajeExisteException {
+    public ResponseEntity<?> updatePersonaje(@Valid @RequestBody PersonajeDto personajeDto, @PathVariable Long id) throws IdInexistenteException, PersonajeExisteException {
         Personaje personajeEntity = personajeMapper.mapToEntity(personajeDto);
         Personaje personajeSave = this.personajeService.updatePersonaje(personajeEntity, id);
         return new ResponseEntity<>(personajeMapper.mapToDtoResponse(personajeSave), HttpStatus.OK);

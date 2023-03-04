@@ -6,9 +6,8 @@ import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository
 import com.besysoft.besysoftejercitacion1.repositories.database.PeliculaRepository;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PeliculaService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteConMismoTituloException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PeliculaExistenteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -82,7 +81,7 @@ class PeliculaServiceDataBaseImplTest {
     }
 
     @Test
-    void buscarPeliculasPorTituloOrGenero() throws GeneroInexistenteException {
+    void buscarPeliculasPorTituloOrGenero() throws IdInexistenteException {
         //GIVEN
         when(this.peliculaRepository.findByTituloOrGenero(any(), any())).thenReturn(DatosDummy.getPeliculasPorFiltro());
         //WHEN
@@ -109,7 +108,7 @@ class PeliculaServiceDataBaseImplTest {
     }
 
     @Test
-    void altaPelicula() throws IdInexistente, PeliculaExistenteConMismoTituloException {
+    void altaPelicula() throws IdInexistenteException, PeliculaExistenteException {
         //GIVEN
         when(generoRepository.findById(any())).thenReturn(Optional.of(datos.getAventura2Mock()));
         //WHEN
@@ -151,7 +150,7 @@ class PeliculaServiceDataBaseImplTest {
     }
 
     @Test
-    void updatePelicula() throws IdInexistente, PeliculaExistenteConMismoTituloException {
+    void updatePelicula() throws IdInexistenteException, PeliculaExistenteException {
         //GIVEN
         when(peliculaRepository.findById(any())).thenReturn(Optional.of(datos.getPeliculaMock()));
         when(generoRepository.findById(any())).thenReturn(Optional.of(datos.getAventura2Mock()));
