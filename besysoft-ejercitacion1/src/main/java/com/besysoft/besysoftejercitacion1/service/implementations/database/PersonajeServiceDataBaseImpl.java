@@ -4,13 +4,14 @@ import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,19 +47,16 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
     @Override
     @Transactional(readOnly = false)
     public Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException {
-        Optional<Personaje> personaje = this.personajeRepository.findByNombre(newPersonaje.getNombre());
-        if (personaje.isPresent()) {
-            if (!personaje.get().getId().equals(newPersonaje.getId()))
-                throw new ElPersonajeExisteException("Ya existe un personaje con misma nombre");
-        }
+        this.validacionPersonaje(newPersonaje, newPersonaje.getId());
         return this.personajeRepository.save(newPersonaje);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws PersonajeInexistenteException, ElPersonajeExisteException {
+    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws IdInexistente, ElPersonajeExisteException {
         Personaje personajeEncontrado = this.personajeRepository.findById(id).orElse(null);
         if (personajeEncontrado != null) {
+            this.validacionPersonaje(newPersonaje, id);
             personajeEncontrado.setNombre(newPersonaje.getNombre());
             personajeEncontrado.setEdad(newPersonaje.getEdad());
             personajeEncontrado.setPeso(newPersonaje.getPeso());
@@ -72,9 +70,17 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
                         }
                     }
             );
-            //para reutilizar la validacion de unique
-            return this.altaPersonaje(personajeEncontrado);
+
+            return this.personajeRepository.save(personajeEncontrado);
         }
-        throw new PersonajeInexistenteException("El id ingresado no existe");
+        throw new IdInexistente("El id ingresado no existe");
+    }
+
+    public void validacionPersonaje(Personaje newPersonaje, Long id) throws ElPersonajeExisteException {
+        Optional<Personaje> personaje = this.personajeRepository.findByNombre(newPersonaje.getNombre());
+        if (personaje.isPresent()) {
+            if (!Objects.equals(personaje.get().getId(), id))
+                throw new ElPersonajeExisteException("Ya existe un personaje con mismo nombre");
+        }
     }
 }

@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +17,6 @@ public class Genero implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
-    @NotEmpty
     @Column(nullable = false, length = 50, unique = true)
     private String nombre;
 
@@ -38,5 +34,11 @@ public class Genero implements Serializable {
         Collections.addAll(this.peliculas_series, pelicula_serie);
     }
 
-
+    @Override
+    public String toString() {
+        return "Genero{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                '}';
+    }
 }

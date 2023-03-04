@@ -53,7 +53,7 @@ class GeneroServiceDataBaseImplTest {
     @Test
     void altaGeneroWhitErrorGeneroExistente() {
         //GIVEN
-        when(repository.findById(any())).thenReturn(Optional.of(datos.getAveturaMock()));
+        when(repository.findByNombre(any())).thenReturn(datos.getAveturaMock());
 
         //THEN
         assertThatThrownBy(() -> service.altaGenero(datos.getAventura2Mock()))

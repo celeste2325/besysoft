@@ -3,7 +3,7 @@ package com.besysoft.besysoftejercitacion1.service.implementations;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Genero;
 import com.besysoft.besysoftejercitacion1.repositories.memory.GeneroRepository;
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class GeneroServiceImpl implements GeneroService {
     }
 
     @Override
-    public Genero updateGenero(Genero newGenero, Long id) throws YaExisteGeneroConMismoNombreException, GeneroInexistenteException {
+    public Genero updateGenero(Genero newGenero, Long id) throws YaExisteGeneroConMismoNombreException, IdInexistente {
         Genero generoEncontradoById = this.generoRepository.buscarGeneroPorId(id);
         Genero generoEncontradoByNombre = this.generoRepository.buscarGeneroPorNombre(newGenero.getNombre());
 
@@ -40,6 +40,6 @@ public class GeneroServiceImpl implements GeneroService {
             }
             return this.generoRepository.updateGenero(generoEncontradoById, newGenero);
         }
-        throw new GeneroInexistenteException("El genero que intenta modificar no existe");
+        throw new IdInexistente("El id del genero que intenta modificar no existe");
     }
 }

@@ -3,7 +3,7 @@ package com.besysoft.besysoftejercitacion1.service.interfaces;
 import com.besysoft.besysoftejercitacion1.dominio.entity.Personaje;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface PersonajeService {
 
     Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException;
 
-    Personaje updatePersonaje(Personaje newPersonaje, Long id) throws PersonajeInexistenteException, ElPersonajeExisteException;
+    Personaje updatePersonaje(Personaje newPersonaje, Long id) throws IdInexistente, ElPersonajeExisteException;
 }

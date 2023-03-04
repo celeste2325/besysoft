@@ -5,7 +5,7 @@ import com.besysoft.besysoftejercitacion1.repositories.memory.PersonajeRepositor
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class PersonajeServiceImpl implements PersonajeService {
     }
 
     @Override
-    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws PersonajeInexistenteException, ElPersonajeExisteException {
+    public Personaje updatePersonaje(Personaje newPersonaje, Long id) throws IdInexistente, ElPersonajeExisteException {
         Personaje personajeEncontradoById = this.personajeRepository.buscarPersonajePorId(id);
         Personaje personajeEncontradoByNombre = this.personajeRepository.buscarPersonajePorNombre(newPersonaje);
 
@@ -63,6 +63,6 @@ public class PersonajeServiceImpl implements PersonajeService {
             }
             return this.personajeRepository.modificarPersonaje(personajeEncontradoById, newPersonaje);
         }
-        throw new PersonajeInexistenteException("El personaje que intenta modificar no existe");
+        throw new IdInexistente("El personaje que intenta modificar no existe");
     }
 }

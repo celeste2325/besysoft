@@ -6,7 +6,7 @@ import com.besysoft.besysoftejercitacion1.repositories.database.PersonajeReposit
 import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.BuscarPorEdadOPorNombreException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
-import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
+import com.besysoft.besysoftejercitacion1.utilidades.exceptions.IdInexistente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -98,7 +98,7 @@ class PersonajeServiceDataBaseImplTest {
     }
 
     @Test
-    void updatePersonaje() throws PersonajeInexistenteException, ElPersonajeExisteException {
+    void updatePersonaje() throws ElPersonajeExisteException, IdInexistente {
         //GIVEN
         when(personajeRepository.findById(any())).thenReturn(Optional.of(DatosDummy.getPersonaje1()));
         personajeService.updatePersonaje(DatosDummy.getPersonaje1Update(), DatosDummy.getPersonaje1Update().getId());
