@@ -70,7 +70,7 @@ public class PeliculaServiceDataBaseImpl implements PeliculaService {
         if (this.peliculaRepository.findByTitulo(peliculaNew.getTitulo()) != null) {
             throw new PeliculaExistenteConMismoTituloException("La pelicula ya existe");
         }
-        if (!this.generoRepository.findById(peliculaNew.getGenero().getId()).isPresent()) {
+        if (this.generoRepository.findById(peliculaNew.getGenero().getId()).isEmpty()) {
             throw new IdInexistente("El genero que intenta asignar a la pelicula no existe");
         }
         return this.peliculaRepository.save(peliculaNew);

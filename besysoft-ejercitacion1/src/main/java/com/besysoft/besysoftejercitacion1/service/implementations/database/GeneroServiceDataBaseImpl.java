@@ -5,10 +5,12 @@ import com.besysoft.besysoftejercitacion1.repositories.database.GeneroRepository
 import com.besysoft.besysoftejercitacion1.service.interfaces.GeneroService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.GeneroInexistenteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.YaExisteGeneroConMismoNombreException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "database")
@@ -22,15 +24,12 @@ public class GeneroServiceDataBaseImpl implements GeneroService {
     @Override
     @Transactional(readOnly = false)
     public Genero altaGenero(Genero newGenero) throws YaExisteGeneroConMismoNombreException {
-        try {
-            return this.generoRepository.save(newGenero);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) {
+        Optional<Genero> genero = this.generoRepository.findById(newGenero.getId());
+        if (genero.isPresent()) {
+            if (!Objects.equals(genero.get().getId(), newGenero.getId()))
                 throw new YaExisteGeneroConMismoNombreException("Ya existe un genero con mismo nombre");
-            } else {
-                throw e;
-            }
         }
+        return this.generoRepository.save(newGenero);
     }
 
     @Override

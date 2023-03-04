@@ -6,12 +6,12 @@ import com.besysoft.besysoftejercitacion1.service.interfaces.PersonajeService;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.ElPersonajeExisteException;
 import com.besysoft.besysoftejercitacion1.utilidades.exceptions.PersonajeInexistenteException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "type-bean", havingValue = "database")
@@ -46,17 +46,12 @@ public class PersonajeServiceDataBaseImpl implements PersonajeService {
     @Override
     @Transactional(readOnly = false)
     public Personaje altaPersonaje(Personaje newPersonaje) throws ElPersonajeExisteException {
-        try {
-            return this.personajeRepository.save(newPersonaje);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) {
-                //verificacion de unicidad
-                if (e.getCause().getCause().getMessage().contains("Violación de indice de Unicidad ó Clave primaria")) {
-                    throw new ElPersonajeExisteException("Ya existe un personaje con misma nombre");
-                }
-            }
-            throw e;
+        Optional<Personaje> personaje = this.personajeRepository.findByNombre(newPersonaje.getNombre());
+        if (personaje.isPresent()) {
+            if (!personaje.get().getId().equals(newPersonaje.getId()))
+                throw new ElPersonajeExisteException("Ya existe un personaje con misma nombre");
         }
+        return this.personajeRepository.save(newPersonaje);
     }
 
     @Override
